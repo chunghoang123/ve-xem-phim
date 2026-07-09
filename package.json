@@ -1,0 +1,46 @@
+{
+  "name": "ai-book-movie-tickets",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:server": "node server/index.cjs",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:server\"",
+    "build": "vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "fetch-trailers": "node server/scripts/fetch-trailers.cjs"
+  },
+  "dependencies": {
+    "@react-oauth/google": "^0.13.5",
+    "bcryptjs": "^3.0.3",
+    "clsx": "^2.1.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.2",
+    "firebase": "^12.15.0",
+    "firebase-admin": "^14.1.0",
+    "google-auth-library": "^10.9.0",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^1.23.0",
+    "mysql2": "^3.22.6",
+    "nodemailer": "^9.0.3",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.18.1",
+    "tailwind-merge": "^3.6.0",
+    "twilio": "^6.0.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "concurrently": "^10.0.3",
+    "oxlint": "^1.71.0",
+    "tailwindcss": "^4.3.2",
+    "vite": "^8.1.1"
+  }
+}
