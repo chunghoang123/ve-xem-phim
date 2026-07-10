@@ -6,6 +6,7 @@ const { authenticate, optionalAuth } = require('../middleware/auth.cjs');
 const authorize = require('../middleware/authorize.cjs');
 
 router.get('/hot', optionalAuth, MovieController.getHot);
+router.get('/available', optionalAuth, MovieController.getAvailable);
 router.get('/', optionalAuth, MovieController.getAll);
 router.get('/:id', optionalAuth, MovieController.getById);
 router.get('/:id/showtimes', optionalAuth, ShowtimeController.getByMovieGrouped);

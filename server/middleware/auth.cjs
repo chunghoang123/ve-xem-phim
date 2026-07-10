@@ -14,7 +14,7 @@ function authenticate(req, res, next) {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
-  } catch (err) {
+  } catch {
     return res.status(401).json({ success: false, message: 'Unauthorized - Token không hợp lệ hoặc đã hết hạn' });
   }
 }
@@ -25,7 +25,7 @@ function optionalAuth(req, res, next) {
     const token = authHeader.split(' ')[1];
     try {
       req.user = jwt.verify(token, JWT_SECRET);
-    } catch (err) {
+    } catch {
       // ignore invalid token
     }
   }

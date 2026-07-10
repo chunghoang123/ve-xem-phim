@@ -75,6 +75,17 @@ const MovieModel = {
     const [rows] = await pool.query('SELECT COUNT(*) as cnt FROM showtimes WHERE movie_id = ?', [id]);
     return rows[0].cnt > 0;
   },
+
+  async findAvailable() {
+    const [rows] = await pool.query(`
+      SELECT DISTINCT m.* FROM movies m
+      JOIN showtimes s ON m.id = s.movie_id
+      WHERE m.status = 'active'
+      AND s.date >= CURDATE()
+      ORDER BY m.title ASC
+    `);
+    return rows;
+  },
 };
 
 module.exports = MovieModel;

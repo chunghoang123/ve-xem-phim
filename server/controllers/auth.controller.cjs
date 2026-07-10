@@ -405,7 +405,7 @@ const AuthController = {
         return error(res, 'Không tìm thấy người dùng', 404);
       }
       return success(res, sanitizeUser(user));
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy thông tin', 500);
     }
   },
@@ -415,7 +415,7 @@ const AuthController = {
       const { name, phone } = req.body;
       const user = await UserModel.update(req.user.userId, { name, phone });
       return success(res, user, 'Cập nhật thông tin thành công');
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi cập nhật thông tin', 500);
     }
   },
@@ -444,7 +444,7 @@ const AuthController = {
       await UserModel.update(req.user.userId, { password: hashed });
 
       return success(res, null, 'Đổi mật khẩu thành công');
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi đổi mật khẩu', 500);
     }
   },

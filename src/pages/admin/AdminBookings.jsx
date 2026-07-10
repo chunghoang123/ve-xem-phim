@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Search, X, Eye } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { X, Eye } from "lucide-react";
 import { formatCurrency, formatDate, formatDateTime, handleImgError } from "../../lib/utils";
 import { api } from "../../lib/api";
 
@@ -10,7 +10,7 @@ export default function AdminBookings() {
   const [detail, setDetail] = useState(null);
   const [error, setError] = useState("");
 
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     try {
       setLoading(true);
       let params = '?limit=50';
@@ -22,9 +22,9 @@ export default function AdminBookings() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
 
-  useEffect(() => { fetchBookings(); }, [statusFilter]);
+  useEffect(() => { fetchBookings(); }, [fetchBookings]);
 
   return (
     <div>

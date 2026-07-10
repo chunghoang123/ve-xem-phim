@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, Plus, Pencil, Trash2, X } from "lucide-react";
 import { formatDate } from "../../lib/utils";
 import { api } from "../../lib/api";
@@ -11,7 +11,7 @@ export default function AdminUsers() {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const params = search ? `?search=${search}` : '';
@@ -22,10 +22,9 @@ export default function AdminUsers() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]);
 
-  useEffect(() => { fetchUsers(); }, []);
-  useEffect(() => { const t = setTimeout(fetchUsers, 300); return () => clearTimeout(t); }, [search]);
+  useEffect(() => { const t = setTimeout(fetchUsers, 300); return () => clearTimeout(t); }, [fetchUsers]);
 
   const handleDelete = async (id) => {
     if (!confirm("Xóa người dùng này?")) return;

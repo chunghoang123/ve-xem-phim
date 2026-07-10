@@ -1,191 +1,156 @@
-import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { MessageCircle, X, Send, Bot, User, Sparkles, Film } from "lucide-react";
-import { movies, cinemas } from "../data/mockData";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { MessageCircle, X, Send, Bot, User, Sparkles, CreditCard, RefreshCw } from "lucide-react";
 import { cn } from "../lib/utils";
+import { getTokenValue } from "../lib/api";
 
-const NVIDIA_API_KEY = import.meta.env.VITE_NVIDIA_API_KEY;
+const API_BASE = "/api";
 
-if (!NVIDIA_API_KEY) {
-  console.warn("VITE_NVIDIA_API_KEY not found in .env. Chatbot will use fallback mode.");
-}
-
-const API_URL = "/api/ai/chat";
-const MODEL = "meta/llama-3.1-8b-instruct";
-
-const SYSTEM_PROMPT = `Bạn là CineX AI, trợ lý đặt vé xem phim thông minh của hệ thống rạp CineX.
-
-THÔNG TIN PHIM HIỆN TẠI:
-${movies.map((m) => `- [ID:${m.id}] ${m.title} - ${m.genre} - ${m.duration}ph - ${m.rating} - ${m.ticketPrice.toLocaleString("vi-VN")}đ / VIP: ${m.vipPrice.toLocaleString("vi-VN")}đ
-  Diễn viên: ${m.cast}
-  Mô tả: ${m.description}`).join("\n")}
-
-LỊCH CHIẾU THEO PHIM:
-${movies.map((m) => `${m.title}:\n${m.showtimes.map((s) => `  - ${s.date}: ${s.times.join(", ")}`).join("\n")}`).join("\n")}
-
-HỆ THỐNG RẠP:
-${cinemas.map((c) => `- ${c.name}: ${c.address}`).join("\n")}
-
-KHUYẾN MÃI HIỆN TẠI:
-- TUE50: Giảm 50% vé thứ 3 hàng tuần
-- COMBO2: Combo 2 vé + bắp nước miễn phí
-- VIP30: Thành viên VIP giảm 30%
-- BUY3GET1: Mua 3 tặng 1
-
-QUY TẮC:
-1. Trả lời bằng tiếng Việt, thân thiện, dùng emoji 🎬🎫📅🎉📍👋
-2. Khi nói về phim cụ thể, LUÔN kèm tên phim đầy đủ để người dùng biết chính xác
-3. Cung cấp suất chiếu theo ngày đầy đủ
-4. Luôn hỏi lại để giúp người dùng đặt vé
-5. Giữ câu trả lời ngắn gọn, dễ đọc, xuống dòng hợp lý`;
-
-function extractMovieId(text) {
-  for (const movie of movies) {
-    if (text.toLowerCase().includes(movie.title.toLowerCase())) {
-      return movie.id;
-    }
-  }
-  return null;
-}
-
-function getDefaultQuickReplies(text) {
-  if (/phim|chiếu|suất/i.test(text)) {
-    return ["Đặt vé ngay", "Khuyến mãi", "Rạp CineX"];
-  }
-  if (/đặt|vé|book|mua/i.test(text)) {
-    return ["Phim đang chiếu", "Lịch chiếu hôm nay", "Khuyến mãi"];
-  }
-  if (/khuyến mãi|giảm giá|ưu đãi/i.test(text)) {
-    return ["Đặt vé ngay", "Phim đang chiếu"];
-  }
-  if (/rạp|cinema|địa chỉ|ở đâu/i.test(text)) {
-    return ["Phim đang chiếu", "Đặt vé nhanh"];
-  }
-  return ["Phim đang chiếu", "Đặt vé nhanh", "Khuyến mãi", "Lịch chiếu hôm nay"];
-}
-
-async function callNvidiaAI(conversation) {
-  const apiMessages = [
-    { role: "system", content: SYSTEM_PROMPT },
-    ...conversation.map((m) => ({
-      role: m.role === "user" ? "user" : "assistant",
-      content: m.text,
-    })),
-  ];
-
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: apiMessages,
-      temperature: 0.7,
-      max_tokens: 1024,
-    }),
-  });
-
-  if (!response.ok) {
-    const errText = await response.text().catch(() => "");
-    throw new Error(`API ${response.status}: ${errText}`);
-  }
-
-  const data = await response.json();
-  const text = data.choices[0].message.content;
-  const movieId = extractMovieId(text);
-  const quickReplies = getDefaultQuickReplies(text);
-
-  return { text, movieId, quickReplies };
-}
-
-function getBotReply(message) {
-  const list = movies.slice(0, 5).map((m, i) => `${i + 1}. ${m.title} - ${m.genre}`).join("\n");
-  return {
-    text: `Đây là các phim đang chiếu tại CineX:\n\n${list}\n\nBạn muốn đặt vé phim nào?`,
-    quickReplies: movies.slice(0, 3).map((m) => m.title),
-  };
+function authHeaders() {
+  const token = getTokenValue();
+  return token
+    ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+    : { "Content-Type": "application/json" };
 }
 
 export default function ChatBox() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      role: "bot",
-      text: "Xin chào! 👋 Mình là CineX AI, trợ lý đặt vé thông minh. Bạn muốn xem phim gì hôm nay?",
-      quickReplies: ["Phim đang chiếu", "Đặt vé nhanh", "Khuyến mãi"],
-    },
-  ]);
+  const [conversationId, setConversationId] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [paymentData, setPaymentData] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
   useEffect(() => {
-    if (isOpen) inputRef.current?.focus();
-  }, [isOpen]);
+    if (isOpen) {
+      inputRef.current?.focus();
+      if (messages.length === 0) {
+        const greeting = {
+          id: Date.now(),
+          role: "bot",
+          text: `Xin chào! 👋 Mình là **CineX AI**, trợ lý đặt vé thông minh.
 
-  const handleSend = async (text) => {
-    const userMsg = text || input.trim();
-    if (!userMsg) return;
+Mình có thể:
+• 🎬 Xem phim đang chiếu
+• 📅 Tra suất chiếu
+• 📍 Tìm rạp gần bạn
+• 🎫 Đặt vé nhanh chóng
+• 💳 Thanh toán qua PayOS
 
-    const newUserMsg = { id: Date.now(), role: "user", text: userMsg };
-    setMessages((prev) => [...prev, newUserMsg]);
-    setInput("");
+Bạn muốn xem phim gì hôm nay?`,
+          quickReplies: ["Phim đang chiếu 🎬", "Hỗ trợ"],
+        };
+        setMessages([greeting]);
+      }
+    }
+  }, [isOpen, messages.length]);
+
+  const sendToAI = useCallback(async (text) => {
     setIsTyping(true);
+    try {
+      const res = await fetch(`${API_BASE}/ai/chat`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({ conversationId, message: text }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || "Lỗi");
 
-    if (!NVIDIA_API_KEY) {
-      setTimeout(() => {
-        const reply = getBotReply(userMsg);
+      if (!conversationId) setConversationId(data.conversationId);
+
+      const botMsg = {
+        id: Date.now() + 1,
+        role: "bot",
+        text: data.message,
+        quickReplies: (data.suggestedActions || []).map((a) => a.label),
+        suggestedActions: data.suggestedActions || [],
+        data: data.data,
+        currentStep: data.currentStep,
+      };
+      setMessages((prev) => [...prev, botMsg]);
+      setPaymentData(
+        data.currentStep === "PAYMENT_PENDING" && data.data ? data.data : null
+      );
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          role: "bot",
+          text: `❌ Lỗi: ${err.message}. Vui lòng thử lại!`,
+          quickReplies: ["Phim đang chiếu 🎬", "Hỗ trợ"],
+          suggestedActions: [],
+        },
+      ]);
+    }
+    setIsTyping(false);
+  }, [conversationId]);
+
+  const handleSend = useCallback(
+    async (text) => {
+      const userMsg = text || input.trim();
+      if (!userMsg) return;
+
+      const userMessage = { id: Date.now(), role: "user", text: userMsg };
+      setMessages((prev) => [...prev, userMessage]);
+      setInput("");
+
+      if (userMsg === "Hỗ trợ") {
         setMessages((prev) => [
           ...prev,
           {
             id: Date.now() + 1,
             role: "bot",
-            text: reply.text,
-            quickReplies: reply.quickReplies,
+            text: `Mình có thể giúp bạn:\n\n🎬 **Xem phim**: "Có phim gì đang chiếu?"\n🎫 **Đặt vé**: "Đặt vé xem [tên phim]"\n📍 **Tìm rạp**: "Rạp gần [địa chỉ]"\n📅 **Suất chiếu**: "Suất chiếu hôm nay"\n\n**Quy trình đặt vé:**\n1️⃣ Chọn phim\n2️⃣ Chọn khu vực\n3️⃣ Chọn rạp\n4️⃣ Chọn ngày\n5️⃣ Chọn suất chiếu\n6️⃣ Chọn ghế\n7️⃣ Thanh toán PayOS 💳`,
+            quickReplies: ["Phim đang chiếu 🎬", "Đặt vé nhanh"],
+            suggestedActions: [{ type: "LIST_MOVIES", label: "Phim đang chiếu 🎬", value: "" }],
           },
         ]);
-        setIsTyping(false);
-      }, 600 + Math.random() * 800);
-      return;
-    }
+        return;
+      }
 
-    try {
-      const convHistory = [...messages, newUserMsg];
-      const reply = await callNvidiaAI(convHistory);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          role: "bot",
-          text: reply.text,
-          quickReplies: reply.quickReplies,
-          movieId: reply.movieId,
-          action: reply.movieId
-            ? () => navigate(`/movies/${reply.movieId}`)
-            : null,
-        },
-      ]);
-    } catch (err) {
-      console.error("NVIDIA API error:", err);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          role: "bot",
-          text: "Xin lỗi, mình đang gặp sự cố kết nối. Vui lòng thử lại sau! 😔",
-          quickReplies: ["Phim đang chiếu", "Đặt vé nhanh", "Khuyến mãi"],
-        },
-      ]);
-    } finally {
-      setIsTyping(false);
-    }
-  };
+      if (userMsg === "Đặt vé nhanh" || userMsg === "Đặt vé ngay") {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            role: "bot",
+            text: "Bạn muốn xem phim nào? Vui lòng cho mình tên phim nhé! 🎬",
+            quickReplies: ["Phim đang chiếu 🎬"],
+            suggestedActions: [],
+          },
+        ]);
+        return;
+      }
+
+      if (userMsg.startsWith("Phim đang chiếu") || userMsg === "Phim đang chiếu 🎬") {
+        setConversationId(null);
+        await sendToAI("Có phim gì đang chiếu?");
+        return;
+      }
+
+      if (userMsg.startsWith("Kiểm tra") || userMsg === "Kiểm tra thanh toán 🔄") {
+        const lastPayment = paymentData;
+        if (lastPayment?.paymentCode) {
+          await sendToAI("Kiểm tra thanh toán");
+          return;
+        }
+      }
+
+      if (paymentData?.checkoutUrl && userMsg.startsWith("Thanh toán")) {
+        window.open(paymentData.checkoutUrl, "_blank");
+        return;
+      }
+
+      await sendToAI(userMsg);
+    },
+    [input, sendToAI, paymentData]
+  );
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -194,11 +159,24 @@ export default function ChatBox() {
     }
   };
 
+  const handleQuickReply = (reply) => {
+    if (paymentData?.checkoutUrl && reply === "Mở PayOS 💳") {
+      window.open(paymentData.checkoutUrl, "_blank");
+      return;
+    }
+    if (paymentData && reply === "Kiểm tra thanh toán 🔄") {
+      sendToAI("Kiểm tra thanh toán");
+      return;
+    }
+    handleSend(reply);
+  };
+
   const formatText = (text) => {
+    if (!text) return null;
     return text.split("\n").map((line, i) => {
       const formatted = line
         .replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground font-semibold">$1</strong>')
-        .replace(/🎬|🎫|📅|🎉|📍|👋/g, '<span class="text-base">$&</span>');
+        .replace(/~~(.*?)~~/g, '<span class="line-through text-muted-foreground">$1</span>');
       return (
         <span key={i}>
           <span dangerouslySetInnerHTML={{ __html: formatted }} />
@@ -206,6 +184,32 @@ export default function ChatBox() {
         </span>
       );
     });
+  };
+
+  const renderPaymentData = (data) => {
+    if (!data) return null;
+    return (
+      <div className="mt-3 space-y-2">
+        <div className="text-xs text-muted-foreground space-y-1">
+          {data.amount && (
+            <p>💰 Số tiền: <strong className="text-foreground">{(data.amount || data.totalAmount || 0).toLocaleString("vi-VN")}đ</strong></p>
+          )}
+          {data.booking_code && <p>📄 Mã đơn: {data.booking_code}</p>}
+          {data.seatCodes?.length > 0 && <p>🎟️ Ghế: {data.seatCodes.join(", ")}</p>}
+          {data.checkoutUrl && (
+            <a
+              href={data.checkoutUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 block w-full text-center px-3 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold hover:from-purple-600 hover:to-pink-600 transition-all"
+            >
+              <CreditCard className="w-3.5 h-3.5 inline mr-1" />
+              Mở PayOS thanh toán 💳
+            </a>
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -240,7 +244,7 @@ export default function ChatBox() {
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                 <span className="text-white/80 text-[10px] sm:text-xs">
-                  {NVIDIA_API_KEY ? "NVIDIA AI · Đang hoạt động" : "Đang hoạt động"}
+                  Đang hoạt động
                 </span>
               </div>
             </div>
@@ -262,21 +266,20 @@ export default function ChatBox() {
                 )}
                 <div
                   className={cn(
-                    "max-w-[80%] rounded-2xl px-3.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm leading-relaxed",
+                    "max-w-[85%] rounded-2xl px-3.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm leading-relaxed",
                     msg.role === "user"
                       ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-br-md"
                       : "bg-muted text-foreground rounded-bl-md"
                   )}
                 >
                   <div>{formatText(msg.text)}</div>
-                  {msg.action && (
-                    <button
-                      onClick={msg.action}
-                      className="mt-2 px-3 py-1.5 rounded-lg bg-purple-500/20 text-purple-400 text-xs font-semibold hover:bg-purple-500/30 transition-colors"
-                    >
-                      <Film className="w-3 h-3 inline mr-1" />
-                      Xem phim →
-                    </button>
+                  {msg.role === "bot" && msg.currentStep === "PAYMENT_PENDING" && msg.data && renderPaymentData(msg.data)}
+
+                  {msg.role === "bot" && msg.currentStep === "COMPLETED" && msg.data?.ticketCode && (
+                    <div className="mt-3 p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                      <p className="text-emerald-400 font-bold text-xs">🎉 ĐẶT VÉ THÀNH CÔNG!</p>
+                      <p className="text-xs text-muted-foreground mt-1">Mã vé: <strong className="text-foreground">{msg.data.ticketCode}</strong></p>
+                    </div>
                   )}
                 </div>
                 {msg.role === "user" && (
@@ -303,19 +306,54 @@ export default function ChatBox() {
             )}
 
             {!isTyping && messages.length > 0 && (() => {
-              const lastBot = [...messages].reverse().find((m) => m.role === "bot" && m.quickReplies);
+              const lastBot = [...messages].reverse().find(
+                (m) => m.role === "bot" && m.quickReplies?.length > 0
+              );
               if (!lastBot || lastBot.id !== messages[messages.length - 1]?.id) return null;
+              const steps = lastBot.currentStep;
+              const isPayment = steps === "PAYMENT_PENDING" && paymentData;
+              const isCompleted = steps === "COMPLETED";
+
               return (
                 <div className="flex flex-wrap gap-1.5 sm:gap-2 animate-enter">
-                  {lastBot.quickReplies.map((reply) => (
+                  {isPayment && paymentData?.checkoutUrl && (
                     <button
-                      key={reply}
-                      onClick={() => handleSend(reply)}
-                      className="px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] sm:text-xs font-medium hover:bg-purple-500/20 transition-colors"
+                      onClick={() => window.open(paymentData.checkoutUrl, "_blank")}
+                      className="px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white text-xs font-bold hover:from-emerald-600 hover:to-green-600 transition-all flex items-center gap-1.5"
                     >
-                      {reply}
+                      <CreditCard className="w-3.5 h-3.5" />
+                      Mở PayOS 💳
                     </button>
-                  ))}
+                  )}
+                  {isPayment && (
+                    <button
+                      onClick={() => sendToAI("Kiểm tra thanh toán")}
+                      className="px-3 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-medium hover:bg-purple-500/20 transition-all flex items-center gap-1"
+                    >
+                      <RefreshCw className="w-3 h-3" />
+                      Kiểm tra 🔄
+                    </button>
+                  )}
+                  {!isCompleted && lastBot.quickReplies.map((reply, idx) => {
+                    if (reply.includes("✅") || reply.includes("📅") || reply.includes("📍")) return null;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => handleQuickReply(reply)}
+                        className="px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] sm:text-xs font-medium hover:bg-purple-500/20 transition-colors max-w-full truncate"
+                      >
+                        {reply}
+                      </button>
+                    );
+                  })}
+                  {isCompleted && (
+                    <button
+                      onClick={() => { setMessages([]); setConversationId(null); setPaymentData(null); setIsOpen(false); }}
+                      className="px-3 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-medium hover:bg-purple-500/20 transition-all"
+                    >
+                      Đặt vé mới 🎬
+                    </button>
+                  )}
                 </div>
               );
             })()}
@@ -331,7 +369,7 @@ export default function ChatBox() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Nhập tin nhắn..."
+                placeholder={paymentData ? "Kiểm tra thanh toán..." : "Nhập tin nhắn..."}
                 className="flex-1 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-muted border border-border text-foreground text-xs sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all min-w-0"
               />
               <button

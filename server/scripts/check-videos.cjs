@@ -1,4 +1,4 @@
-const { fetchTMDB, searchMovieByTitle } = require('../services/tmdb.service.cjs');
+const { fetchTMDB } = require('../services/tmdb.service.cjs');
 
 async function check() {
   const tmdbIds = [1339713, 1083381, 1280738, 1315772, 1081003, 1108427, 1212763,

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Play, Star, Clock, ChevronRight, Sparkles, Ticket, Shield, Zap } from "lucide-react";
-import { formatCurrency, handleImgError } from "../lib/utils";
+import { handleImgError } from "../lib/utils";
 import { api } from "../lib/api";
 import TrailerModal from "../components/TrailerModal";
 import MovieCard from "../components/MovieCard";
@@ -189,4 +189,3 @@ export default function Home() {
     </div>
   );
 }
-

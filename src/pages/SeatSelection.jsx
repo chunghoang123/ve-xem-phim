@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
-import { useParams, useSearchParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Info, Check, MapPin, Clock } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, Info, Check, Loader2 } from "lucide-react";
 import { formatCurrency } from "../lib/utils";
 import { api } from "../lib/api";
 
@@ -18,6 +18,7 @@ export default function SeatSelection() {
   const [seats, setSeats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [holding, setHolding] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -31,6 +32,7 @@ export default function SeatSelection() {
       const seatList = layout.seats || [];
       if (seatList.length > 0) {
         setSeats(seatList.map(s => ({
+          id: s.id,
           row_label: s.row,
           seat_number: s.number,
           is_vip: s.isVip ? 1 : 0,
@@ -73,7 +75,6 @@ export default function SeatSelection() {
   const total = normalCount * (movie?.ticket_price || 0) + vipCount * (movie?.vip_price || 0);
 
   const rows = [...new Set(seats.map(s => s.row_label))].sort();
-  const seatsPerRow = Math.max(...rows.map(r => seats.filter(s => s.row_label === r).length));
 
   if (loading) {
     return (
@@ -193,14 +194,29 @@ export default function SeatSelection() {
               <p className="text-base sm:text-xl font-bold text-purple-400">{formatCurrency(total)}</p>
             </div>
           </div>
-          <button disabled={selectedSeats.length === 0}
-            onClick={() => navigate(`/movies/${movie.id}/checkout?seats=${selectedSeats.join(",")}&time=${time}&date=${date}&cinema=${cinemaId}&total=${total}&showtimeId=${showtimeId}`)}
+          <button disabled={selectedSeats.length === 0 || holding}
+            onClick={async () => {
+              setHolding(true);
+              try {
+                const seatIds = selectedSeats.map(label => {
+                  const seat = seats.find(s => `${s.row_label}${s.seat_number}` === label);
+                  return seat?.id;
+                }).filter(Boolean);
+                const res = await api.post('/v1/seat-holds', { showtime_id: showtimeId, seat_ids: seatIds });
+                navigate(`/movies/${movie.id}/checkout?holdCode=${res.data.hold_code}&time=${time}&date=${date}&cinema=${cinemaId}&showtimeId=${showtimeId}`);
+              } catch (err) {
+                alert(err.data?.message || "Không thể giữ ghế, vui lòng thử lại");
+              } finally {
+                setHolding(false);
+              }
+            }}
             className={`w-full mt-2.5 sm:mt-3 px-4 sm:px-6 py-3 sm:py-3.5 rounded-xl font-semibold transition-all text-sm sm:text-base ${
               selectedSeats.length > 0
                 ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 shadow-lg shadow-purple-500/25"
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}>
-            {selectedSeats.length > 0 ? `Thanh toán ${formatCurrency(total)}` : "Chọn ghế để tiếp tục"}
+            {holding ? <span className="flex items-center justify-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Đang giữ ghế...</span> :
+             selectedSeats.length > 0 ? `Thanh toán ${formatCurrency(total)}` : "Chọn ghế để tiếp tục"}
           </button>
         </div>
       </div>

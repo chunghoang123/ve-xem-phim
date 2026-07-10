@@ -19,7 +19,10 @@ async function request(endpoint, options = {}) {
   };
 
   const response = await fetch(url, config);
-  const data = await response.json();
+  const contentType = response.headers.get('content-type') || '';
+  const data = contentType.includes('application/json')
+    ? await response.json()
+    : { message: await response.text() || 'Yêu cầu thất bại' };
 
   if (!response.ok) {
     const error = new Error(data.message || 'Yêu cầu thất bại');

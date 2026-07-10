@@ -8,7 +8,7 @@ const UserController = {
       const { page = 1, limit = 10, search = '', sort_by: sortBy, sort_order: sortOrder } = req.query;
       const result = await UserModel.findAll({ page, limit, search, sortBy, sortOrder });
       return paginated(res, result.rows, result.total, page, limit);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy danh sách người dùng', 500);
     }
   },
@@ -18,7 +18,7 @@ const UserController = {
       const user = await UserModel.findById(req.params.id);
       if (!user) return error(res, 'Không tìm thấy người dùng', 404);
       return success(res, user);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy chi tiết người dùng', 500);
     }
   },
@@ -44,7 +44,7 @@ const UserController = {
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = await UserModel.create({ name, email, password: hashedPassword, phone, role_id: role_id || 3 });
       return success(res, user, 'Thêm người dùng thành công', 201);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi thêm người dùng', 500);
     }
   },
@@ -69,7 +69,7 @@ const UserController = {
 
       const user = await UserModel.update(req.params.id, data);
       return success(res, user, 'Cập nhật người dùng thành công');
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi cập nhật người dùng', 500);
     }
   },

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Film, DollarSign, Users, Calendar, Database, RefreshCw, Check, AlertCircle } from "lucide-react";
+import { Film, Users, Calendar, Database, RefreshCw, Check, AlertCircle } from "lucide-react";
 import { formatCurrency } from "../../lib/utils";
 import { api } from "../../lib/api";
 

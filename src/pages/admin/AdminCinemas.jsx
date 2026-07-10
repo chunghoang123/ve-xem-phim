@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, Plus, Pencil, Trash2, X } from "lucide-react";
 import { api } from "../../lib/api";
 
@@ -10,7 +10,7 @@ export default function AdminCinemas() {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
 
-  const fetchCinemas = async () => {
+  const fetchCinemas = useCallback(async () => {
     try {
       setLoading(true);
       const params = search ? `?search=${search}` : '';
@@ -21,10 +21,9 @@ export default function AdminCinemas() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]);
 
-  useEffect(() => { fetchCinemas(); }, []);
-  useEffect(() => { const t = setTimeout(fetchCinemas, 300); return () => clearTimeout(t); }, [search]);
+  useEffect(() => { const t = setTimeout(fetchCinemas, 300); return () => clearTimeout(t); }, [fetchCinemas]);
 
   const handleDelete = async (id) => {
     if (!confirm("Xóa rạp này?")) return;

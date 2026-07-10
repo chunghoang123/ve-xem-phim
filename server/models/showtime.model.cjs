@@ -1,7 +1,7 @@
 const pool = require('../config/database.cjs');
 
 const ShowtimeModel = {
-  async findAll({ page = 1, limit = 20, movie_id, cinema_id, date, province_id, city, brand, search = '' }) {
+  async findAll({ page = 1, limit = 20, movie_id, cinema_id, date, province_id, city, brand, _search = '' }) {
     const offset = (page - 1) * limit;
     const conditions = [];
     const params = [];

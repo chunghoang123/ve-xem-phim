@@ -13,6 +13,7 @@
     "fetch-trailers": "node server/scripts/fetch-trailers.cjs"
   },
   "dependencies": {
+    "@payos/node": "^2.0.5",
     "@react-oauth/google": "^0.13.5",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
@@ -27,9 +28,11 @@
     "lucide-react": "^1.23.0",
     "mysql2": "^3.22.6",
     "nodemailer": "^9.0.3",
+    "qrcode.react": "^4.2.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1",
+    "sharp": "^0.35.3",
     "tailwind-merge": "^3.6.0",
     "twilio": "^6.0.2"
   },

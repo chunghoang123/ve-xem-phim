@@ -9,7 +9,7 @@ const CinemaController = {
       const { page = 1, limit = 10, search = '', city, district, brand } = req.query;
       const result = await CinemaModel.findAll({ page, limit, search, city, district, brand });
       return paginated(res, result.rows, result.total, page, limit);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy danh sách rạp', 500);
     }
   },
@@ -19,7 +19,7 @@ const CinemaController = {
       const cinema = await CinemaModel.findById(req.params.id);
       if (!cinema) return error(res, 'Không tìm thấy rạp', 404);
       return success(res, cinema);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy chi tiết rạp', 500);
     }
   },
@@ -36,7 +36,7 @@ const CinemaController = {
         city,
       });
       return success(res, cinemas);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi tìm rạp gần đây', 500);
     }
   },
@@ -46,7 +46,7 @@ const CinemaController = {
       const locations = await CinemaModel.getLocations();
       const brands = await CinemaModel.getBrands();
       return success(res, { locations, brands });
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy danh sách khu vực', 500);
     }
   },
@@ -64,7 +64,7 @@ const CinemaController = {
         types: typeArray,
       });
       return success(res, places);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi tìm rạp qua Google Places', 500);
     }
   },
@@ -76,7 +76,7 @@ const CinemaController = {
       const place = await getPlaceDetails(placeId);
       if (!place) return error(res, 'Không tìm thấy địa điểm', 404);
       return success(res, place);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy chi tiết địa điểm', 500);
     }
   },
@@ -89,7 +89,7 @@ const CinemaController = {
       const url = await getPlacePhoto(photoName, parseInt(maxWidthPx));
       if (!url) return error(res, 'Không tìm thấy ảnh', 404);
       return success(res, { url });
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy ảnh địa điểm', 500);
     }
   },
@@ -107,7 +107,7 @@ const CinemaController = {
       }
       const cinema = await CinemaModel.create(data);
       return success(res, cinema, 'Thêm rạp thành công', 201);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi thêm rạp', 500);
     }
   },
@@ -125,7 +125,7 @@ const CinemaController = {
 
       const cinema = await CinemaModel.update(req.params.id, data);
       return success(res, cinema, 'Cập nhật rạp thành công');
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi cập nhật rạp', 500);
     }
   },
@@ -142,7 +142,7 @@ const CinemaController = {
 
       await CinemaModel.delete(req.params.id);
       return success(res, { id: parseInt(req.params.id) }, 'Xóa rạp thành công');
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi xóa rạp', 500);
     }
   },

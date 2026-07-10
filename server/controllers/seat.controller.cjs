@@ -7,7 +7,7 @@ const SeatController = {
     try {
       const layout = await SeatModel.getLayout(req.params.showtimeId);
       return success(res, layout);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy sơ đồ ghế', 500);
     }
   },
@@ -41,7 +41,7 @@ const SeatController = {
       }
 
       return success(res, { ...booking, seats_booked: affected }, 'Đặt vé thành công', 201);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi đặt vé', 500);
     }
   },
@@ -50,7 +50,7 @@ const SeatController = {
     try {
       await SeatModel.resetShowtime(req.params.showtimeId);
       return success(res, null, 'Reset ghế thành công');
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi reset ghế', 500);
     }
   },

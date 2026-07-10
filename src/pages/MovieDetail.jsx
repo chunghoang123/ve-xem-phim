@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Star, Clock, Calendar, Play, MapPin, Navigation, ChevronDown } from "lucide-react";
 import { formatCurrency, formatDate, handleImgError } from "../lib/utils";
 import { api } from "../lib/api";
-import { useLocation } from "../lib/location";
+import { useLocation } from "../lib/location-context";
 import TrailerModal from "../components/TrailerModal";
 
 function getDateLabel(dateStr) {

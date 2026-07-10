@@ -1,7 +1,7 @@
 const pool = require('../config/database.cjs');
 require('dotenv').config();
 
-const BRANDS = ['CGV', 'Lotte', 'Galaxy', 'BHD', 'Beta', 'CineStar', 'Mega GS'];
+const _BRANDS = ['CGV', 'Lotte', 'Galaxy', 'BHD', 'Beta', 'CineStar', 'Mega GS'];
 
 const VIETNAM_CINEMAS = [
   // Hà Nội (province_id: 1)
@@ -236,7 +236,6 @@ async function seed() {
             const screen = screens[si % screens.length];
             if (!screen) continue;
 
-            const [h, m] = time.split(':').map(Number);
             const startDt = new Date(date + 'T' + time + ':00');
             const endDt = new Date(startDt.getTime() + (movie.duration || 120) * 60000);
             const startStr = formatDate(startDt) + ' ' + time + ':00';

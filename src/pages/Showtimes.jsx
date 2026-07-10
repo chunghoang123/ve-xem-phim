@@ -1,9 +1,9 @@
-import { Calendar, MapPin, Search, X, Navigation, ChevronDown, Navigation2, LocateFixed } from "lucide-react";
-import { formatDate, formatCurrency, handleImgError } from "../lib/utils";
-import { useState, useEffect, useMemo } from "react";
+import { MapPin, Search, X, ChevronDown, Navigation, Navigation2, LocateFixed, Calendar } from "lucide-react";
+import { formatCurrency, handleImgError } from "../lib/utils";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
-import { useLocation } from "../lib/location";
+import { useLocation } from "../lib/location-context";
 
 const BRANDS = ["CGV", "Lotte", "BHD", "Beta", "Galaxy"];
 const RADIUS_OPTIONS = [3, 5, 7, 10];
@@ -35,7 +35,7 @@ export default function Showtimes() {
 
   const selectedProvinceName = provinces.find(p => p.id === selectedProvince)?.name || "Chọn tỉnh/thành";
 
-  const fetchShowtimes = async () => {
+  const fetchShowtimes = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({ limit: '5000' });
@@ -50,9 +50,9 @@ export default function Showtimes() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedProvince, selectedCity, selectedBrand]);
 
-  const fetchNearby = async () => {
+  const fetchNearby = useCallback(async () => {
     if (!userCoords) return;
     setGeoLoading(true);
     try {
@@ -73,9 +73,9 @@ export default function Showtimes() {
     } finally {
       setGeoLoading(false);
     }
-  };
+  }, [userCoords, selectedRadius, selectedBrand, selectedCity]);
 
-  useEffect(() => { fetchShowtimes(); }, [selectedCity, selectedProvince, selectedBrand]);
+  useEffect(() => { fetchShowtimes(); }, [fetchShowtimes]);
 
   useEffect(() => {
     if (userCoords) {
@@ -83,7 +83,7 @@ export default function Showtimes() {
     } else {
       setNearbyMap({});
     }
-  }, [userCoords, selectedRadius, selectedBrand, selectedCity]);
+  }, [userCoords, fetchNearby]);
 
   const handleRequestGeo = () => {
     if (!navigator.geolocation) {
@@ -118,9 +118,9 @@ export default function Showtimes() {
   };
 
   const isGeoFiltered = !!(userCoords && selectedRadius);
-  const activeCinemaIds = isGeoFiltered
+  const activeCinemaIds = useMemo(() => isGeoFiltered
     ? new Set(Object.keys(nearbyMap).map(Number))
-    : null;
+    : null, [isGeoFiltered, nearbyMap]);
 
   const groupedData = useMemo(() => {
     const citiesMap = {};

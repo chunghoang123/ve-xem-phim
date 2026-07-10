@@ -1,7 +1,6 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { api } from "./api";
-
-const LocationContext = createContext();
+import { LocationContext } from "./location-context";
 
 export function LocationProvider({ children }) {
   const [locations, setLocations] = useState({ cities: [], provinces: [] });
@@ -79,8 +78,4 @@ export function LocationProvider({ children }) {
       {children}
     </LocationContext>
   );
-}
-
-export function useLocation() {
-  return useContext(LocationContext);
 }

@@ -46,7 +46,7 @@ const AdminController = {
         total_movies: totalMovies[0].total,
         last_sync: lastSync[0].last_sync,
       });
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy trạng thái đồng bộ', 500);
     }
   },

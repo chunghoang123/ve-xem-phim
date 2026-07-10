@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
-import { Search, Plus, Trash2, X } from "lucide-react";
-import { formatCurrency, formatDate, handleImgError } from "../../lib/utils";
+import { useState, useEffect, useCallback } from "react";
+import { Plus, Trash2, X } from "lucide-react";
+import { formatDate, handleImgError } from "../../lib/utils";
 import { api } from "../../lib/api";
 
 export default function AdminShowtimes() {
   const [showtimes, setShowtimes] = useState([]);
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchMovie, setSearchMovie] = useState("");
+  const [searchMovie] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const params = searchMovie ? `?search=${searchMovie}` : '';
@@ -22,16 +22,16 @@ export default function AdminShowtimes() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchMovie]);
 
-  useEffect(() => { fetchData(); fetchMovies(); }, []);
-
-  const fetchMovies = async () => {
+  const fetchMovies = useCallback(async () => {
     try {
       const res = await api.get('/movies?limit=50');
       setMovies(res.data);
     } catch {}
-  };
+  }, []);
+
+  useEffect(() => { fetchData(); fetchMovies(); }, [fetchData, fetchMovies]);
 
   const handleDelete = async (id) => {
     if (!confirm("Xóa lịch chiếu này?")) return;

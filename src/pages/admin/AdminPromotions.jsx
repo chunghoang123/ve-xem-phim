@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, Plus, Pencil, Trash2, X, Gift, GraduationCap, Crown, Ticket } from "lucide-react";
 import { formatDate } from "../../lib/utils";
 import { api } from "../../lib/api";
@@ -12,7 +12,7 @@ export default function AdminPromotions() {
   const [editing, setEditing] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  const fetchPromos = async () => {
+  const fetchPromos = useCallback(async () => {
     try {
       setLoading(true);
       const params = search ? `?search=${search}` : '';
@@ -21,10 +21,9 @@ export default function AdminPromotions() {
     } catch {} finally {
       setLoading(false);
     }
-  };
+  }, [search]);
 
-  useEffect(() => { fetchPromos(); }, []);
-  useEffect(() => { const t = setTimeout(fetchPromos, 300); return () => clearTimeout(t); }, [search]);
+  useEffect(() => { const t = setTimeout(fetchPromos, 300); return () => clearTimeout(t); }, [fetchPromos]);
 
   const handleDelete = async (id) => {
     if (!confirm("Xóa khuyến mãi này?")) return;

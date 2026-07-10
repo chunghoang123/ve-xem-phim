@@ -24,7 +24,7 @@ const MovieController = {
       movie.showtimes = dates;
 
       return success(res, movie);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy chi tiết phim', 500);
     }
   },
@@ -41,7 +41,7 @@ const MovieController = {
 
       const movie = await MovieModel.create(req.body);
       return success(res, movie, 'Thêm phim thành công', 201);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi thêm phim', 500);
     }
   },
@@ -53,7 +53,7 @@ const MovieController = {
 
       const movie = await MovieModel.update(req.params.id, req.body);
       return success(res, movie, 'Cập nhật phim thành công');
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi cập nhật phim', 500);
     }
   },
@@ -70,8 +70,17 @@ const MovieController = {
 
       await MovieModel.delete(req.params.id);
       return success(res, { id: parseInt(req.params.id) }, 'Xóa phim thành công');
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi xóa phim', 500);
+    }
+  },
+
+  async getAvailable(req, res) {
+    try {
+      const movies = await MovieModel.findAvailable();
+      return success(res, movies);
+    } catch {
+      return error(res, 'Lỗi lấy danh sách phim đang chiếu', 500);
     }
   },
 
@@ -79,7 +88,7 @@ const MovieController = {
     try {
       const movies = await getTrendingMovies();
       return success(res, movies.slice(0, 5));
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy phim hot từ TMDB', 500);
     }
   },

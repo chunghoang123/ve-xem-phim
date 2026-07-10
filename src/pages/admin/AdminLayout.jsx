@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Film, Clock, Ticket, Gift, Menu, X, ArrowLeftFromLine, Building2, Users, Shield, AlertCircle } from "lucide-react";
+import { LayoutDashboard, Film, Clock, Ticket, Gift, Menu, X, ArrowLeftFromLine, Building2, Users, Shield } from "lucide-react";
 import { cn } from "../../lib/utils";
-import { useAuth } from "../../components/Navbar";
+import { useAuth } from "../../lib/auth-context";
 
 const sidebarLinks = [
   { to: "/admin", label: "Tổng quan", icon: LayoutDashboard, end: true },

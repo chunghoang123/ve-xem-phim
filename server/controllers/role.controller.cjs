@@ -6,7 +6,7 @@ const RoleController = {
     try {
       const roles = await RoleModel.findAll();
       return success(res, roles);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy danh sách vai trò', 500);
     }
   },
@@ -16,7 +16,7 @@ const RoleController = {
       const role = await RoleModel.findById(req.params.id);
       if (!role) return error(res, 'Không tìm thấy vai trò', 404);
       return success(res, role);
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi lấy chi tiết vai trò', 500);
     }
   },
@@ -42,7 +42,7 @@ const RoleController = {
 
       const role = await RoleModel.update(req.params.id, req.body);
       return success(res, role, 'Cập nhật vai trò thành công');
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi cập nhật vai trò', 500);
     }
   },
@@ -54,7 +54,7 @@ const RoleController = {
         return error(res, result.message || 'Không thể xóa vai trò', 409);
       }
       return success(res, { id: parseInt(req.params.id) }, 'Xóa vai trò thành công');
-    } catch (err) {
+    } catch {
       return error(res, 'Lỗi xóa vai trò', 500);
     }
   },

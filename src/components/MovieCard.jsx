@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Star, Clock } from "lucide-react";
+import { Star } from "lucide-react";
 import { formatCurrency, handleImgError } from "../lib/utils";
 
 export default function MovieCard({ movie, index }) {

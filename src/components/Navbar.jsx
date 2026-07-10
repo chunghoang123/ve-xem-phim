@@ -1,62 +1,11 @@
-import { useState, createContext, useContext, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Film, User, ChevronDown, LogOut, Shield, Mail, Lock, AlertCircle, Smartphone, KeyRound, Phone, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "../lib/utils";
-import { api, setToken, getTokenValue } from "../lib/api";
+import { api } from "../lib/api";
+import { useAuth } from "../lib/auth-context";
 import { auth, googleProvider, facebookProvider } from "../lib/firebase";
 import { signInWithPopup } from "firebase/auth";
-
-const AuthContext = createContext(null);
-
-export function useAuth() {
-  return useContext(AuthContext);
-}
-
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const fetchUser = useCallback(async () => {
-    const token = getTokenValue();
-    if (!token) { setLoading(false); return; }
-    try {
-      const res = await api.get('/auth/me');
-      setUser(res.data);
-    } catch { setToken(null); }
-    finally { setLoading(false); }
-  }, []);
-
-  useEffect(() => { fetchUser(); }, [fetchUser]);
-
-  const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
-    setToken(res.data.token);
-    setUser(res.data.user);
-    return res.data.user;
-  };
-
-  const loginWithPhone = async (phone, password) => {
-    const res = await api.post('/auth/login', { phone, password });
-    setToken(res.data.token);
-    setUser(res.data.user);
-    return res.data.user;
-  };
-
-  const logout = () => { setToken(null); setUser(null); };
-
-  const refreshUser = async () => {
-    try {
-      const res = await api.get('/auth/me');
-      setUser(res.data);
-    } catch {}
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, login, loginWithPhone, logout, loading, refreshUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
 
 const navLinks = [
   { to: "/", label: "Trang chủ" },
@@ -281,7 +230,7 @@ function AuthModal({ onClose, onLoginSuccess }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm animate-fade" onClick={onClose}>
       <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-sm p-6 animate-scale" onClick={(e) => e.stopPropagation()}>
-        {mode === "login" && <LoginForm onClose={onClose} onLoginSuccess={onLoginSuccess} onSwitch={() => setMode("register")} />}
+        {mode === "login" && <LoginForm onLoginSuccess={onLoginSuccess} onSwitch={() => setMode("register")} />}
         {mode === "register" && <RegisterForm onClose={onClose} onSwitch={() => setMode("login")} onOtpSent={handleRegisterSuccess} />}
         {mode === "verify" && <VerifyOtpForm onClose={onClose} phone={registerData.phone} onSwitch={() => setMode("register")} />}
       </div>
@@ -289,7 +238,7 @@ function AuthModal({ onClose, onLoginSuccess }) {
   );
 }
 
-function LoginForm({ onClose, onLoginSuccess, onSwitch }) {
+function LoginForm({ onLoginSuccess, onSwitch }) {
   const [loginMethod, setLoginMethod] = useState("email");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");

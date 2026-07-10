@@ -5,7 +5,7 @@ require('dotenv').config();
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_IMAGE = 'https://image.tmdb.org/t/p';
 const TMDB_KEY = process.env.TMDB_API_KEY;
-const VIETNAM_REGION = 'country:VN';
+const _VIETNAM_REGION = 'country:VN';
 const LANGUAGE = 'vi-VN';
 
 const GENRE_MAP = {
@@ -42,7 +42,7 @@ async function fetchTMDB(endpoint, params = {}) {
       try {
         const stdout = execSync(`curl.exe -s --max-time 15 "${url}"`, { encoding: 'utf8', timeout: 20000 });
         return JSON.parse(stdout);
-      } catch (curlErr) {
+      } catch {
         throw new Error('Không thể kết nối TMDB: ' + (err.cause?.code || err.message));
       }
     }

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Search, Plus, Pencil, Trash2, X, Database, RefreshCw, ChevronDown, Play, Star } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Search, Plus, Pencil, Trash2, X, Database, RefreshCw, Star } from "lucide-react";
 import { formatCurrency, handleImgError } from "../../lib/utils";
 import { api } from "../../lib/api";
 
@@ -11,7 +11,7 @@ export default function AdminMovies() {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
 
-  const fetchMovies = async () => {
+  const fetchMovies = useCallback(async () => {
     try {
       setLoading(true);
       const params = search ? `?search=${search}&limit=50` : '?limit=50';
@@ -22,14 +22,12 @@ export default function AdminMovies() {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => { fetchMovies(); }, []);
+  }, [search]);
 
   useEffect(() => {
     const timer = setTimeout(() => { fetchMovies(); }, 300);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [fetchMovies]);
 
   const handleDelete = async (id) => {
     if (!confirm("Xóa phim này?")) return;
