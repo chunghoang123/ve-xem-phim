@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../lib/auth-context";
 import { api } from "../lib/api";
 import { formatCurrency } from "../lib/utils";
-import { User, Mail, Phone, Lock, AlertCircle, CheckCircle, Save, Ticket, CalendarDays, MapPin, Clock, Loader2, Armchair } from "lucide-react";
+import { User, Mail, Phone, Lock, AlertCircle, CheckCircle, Save, Ticket, CalendarDays, MapPin, Clock, Loader2, Armchair, Popcorn } from "lucide-react";
 
 const bookingStatus = {
   CONFIRMED: { label: "Đã xác nhận", className: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400" },
@@ -26,6 +26,18 @@ function getSeatCodes(booking) {
     return Array.isArray(seats) && seats.length > 0 ? seats.join(", ") : "—";
   } catch {
     return String(booking.seats_json);
+  }
+}
+
+function getConcessions(booking) {
+  if (!booking.concessions_json) return [];
+  try {
+    const items = typeof booking.concessions_json === "string"
+      ? JSON.parse(booking.concessions_json)
+      : booking.concessions_json;
+    return Array.isArray(items) ? items.filter(item => Number(item.quantity) > 0) : [];
+  } catch {
+    return [];
   }
 }
 
@@ -191,6 +203,7 @@ export default function Profile() {
           ) : (
             <div className="space-y-4">
               {bookings.map((booking) => {
+                const concessions = getConcessions(booking);
                 const normalizedStatus = String(booking.status || "").toUpperCase();
                 const status = bookingStatus[normalizedStatus] || {
                   label: booking.status,
@@ -222,6 +235,12 @@ export default function Profile() {
                           <p className="flex items-center gap-2"><Clock className="h-4 w-4 text-purple-400" />{booking.show_time || "—"}</p>
                           <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-purple-400" />{booking.cinema_name}{booking.room_name ? ` · ${booking.room_name}` : ""}</p>
                           <p className="flex items-center gap-2"><Armchair className="h-4 w-4 text-purple-400" />Ghế {getSeatCodes(booking)}</p>
+                          {concessions.length > 0 && (
+                            <p className="flex items-center gap-2 sm:col-span-2">
+                              <Popcorn className="h-4 w-4 shrink-0 text-purple-400" />
+                              {concessions.map(item => `${item.id === "popcorn" ? "Bắp" : item.id === "soft_drink" ? "Nước" : item.id === "popcorn_combo" ? "Combo" : item.name} x${item.quantity}`).join(" · ")}
+                            </p>
+                          )}
                         </div>
 
                         <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-border pt-4">

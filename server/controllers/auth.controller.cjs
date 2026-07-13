@@ -1,12 +1,10 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const UserModel = require('../models/user.model.cjs');
 const OtpModel = require('../models/otp.model.cjs');
 const { sendOtpEmail } = require('../utils/email.cjs');
-const { sendSmsOtp } = require('../utils/sms.cjs');
+const { sendSmsOtp, checkSmsOtp } = require('../utils/sms.cjs');
 const { success, error, validateEmail } = require('../utils/helpers.cjs');
-
-const JWT_SECRET = process.env.JWT_SECRET || 'cinex_jwt_secret_key_2026';
+const { issueTokens, rotateRefreshToken, blacklistAccessToken, revokeRefreshToken } = require('../services/token.service.cjs');
 
 function generateOtp() {
   return String(Math.floor(100000 + Math.random() * 900000));
@@ -15,10 +13,6 @@ function generateOtp() {
 async function getRoleName(roleId) {
   const roleNames = { 1: 'admin', 2: 'staff', 3: 'user' };
   return roleNames[roleId] || 'user';
-}
-
-function generateToken(user, roleName) {
-  return jwt.sign({ userId: user.id, role: roleName }, JWT_SECRET, { expiresIn: '24h' });
 }
 
 function sanitizeUser(user) {
@@ -33,7 +27,100 @@ function sanitizeUser(user) {
   };
 }
 
+function readCookie(req, name) {
+  const cookies = String(req.headers.cookie || '').split(';');
+  for (const cookie of cookies) {
+    const [key, ...value] = cookie.trim().split('=');
+    if (key === name) return decodeURIComponent(value.join('='));
+  }
+  return null;
+}
+
+function setRefreshCookie(res, refreshToken) {
+  res.cookie('cinex_refresh', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/api/auth',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+}
+
+function publicTokens(res, tokens) {
+  setRefreshCookie(res, tokens.refresh_token);
+  const { refresh_token: _hidden, ...safeTokens } = tokens;
+  return safeTokens;
+}
+
 const AuthController = {
+  async refresh(req, res) {
+    try {
+      const refreshToken = readCookie(req, 'cinex_refresh') || req.body?.refresh_token;
+      if (!refreshToken) return error(res, 'Thiếu refresh token', 400);
+      const session = await rotateRefreshToken(refreshToken);
+      const user = await UserModel.findById(session.userId);
+      if (!user) return error(res, 'Tài khoản không còn tồn tại', 401);
+      const roleName = user.role_name || await getRoleName(user.role_id);
+      const tokens = await issueTokens(user, roleName);
+      return success(res, publicTokens(res, tokens), 'Làm mới phiên đăng nhập thành công');
+    } catch (err) {
+      console.error('Refresh token error:', err.message);
+      return error(res, 'Refresh token không hợp lệ, đã hết hạn hoặc đã bị thu hồi', 401);
+    }
+  },
+
+  async logout(req, res) {
+    try {
+      const accessToken = req.headers.authorization?.startsWith('Bearer ')
+        ? req.headers.authorization.slice(7)
+        : null;
+      await Promise.all([
+        blacklistAccessToken(accessToken),
+        revokeRefreshToken(readCookie(req, 'cinex_refresh') || req.body?.refresh_token),
+      ]);
+      res.clearCookie('cinex_refresh', { path: '/api/auth', sameSite: 'strict', secure: process.env.NODE_ENV === 'production' });
+      return success(res, null, 'Đăng xuất thành công');
+    } catch (err) {
+      console.error('Logout error:', err);
+      return error(res, 'Không thể đăng xuất', 500);
+    }
+  },
+
+  // ============== STANDARD EMAIL/PASSWORD REGISTRATION ==============
+  async register(req, res) {
+    try {
+      const { name, email, password } = req.body;
+      if (!name || !email || !password) {
+        return error(res, 'Vui lòng nhập họ tên, email và mật khẩu', 400);
+      }
+      if (!validateEmail(email)) return error(res, 'Email không hợp lệ', 400);
+      if (password.length < 6) return error(res, 'Mật khẩu phải có ít nhất 6 ký tự', 400);
+
+      const normalizedEmail = email.trim().toLowerCase();
+      const existing = await UserModel.findByEmail(normalizedEmail);
+      if (existing) return error(res, 'Email đã được sử dụng', 409);
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await UserModel.create({
+        name: name.trim(),
+        email: normalizedEmail,
+        password: hashedPassword,
+        role_id: 3,
+      });
+      const roleName = await getRoleName(user.role_id);
+      const tokens = await issueTokens(user, roleName);
+      const fullUser = await UserModel.findById(user.id);
+
+      return success(res, {
+        ...publicTokens(res, tokens),
+        user: sanitizeUser(fullUser),
+      }, 'Đăng ký thành công', 201);
+    } catch (err) {
+      console.error('Register error:', err);
+      return error(res, 'Lỗi đăng ký tài khoản', 500);
+    }
+  },
+
   // ============== FIREBASE AUTH (Google / Facebook / Phone) ==============
   async firebaseLogin(req, res) {
     try {
@@ -42,14 +129,14 @@ const AuthController = {
         return error(res, 'Thiếu thông tin đăng nhập', 400);
       }
 
-      const admin = require('../config/firebase.cjs');
-      if (!admin.apps.length || !admin.apps[0]?.options?.credential) {
+      const firebaseAdmin = require('../config/firebase.cjs');
+      if (!firebaseAdmin.isConfigured) {
         return error(res, 'Firebase chưa được cấu hình trên server', 500);
       }
 
       let decoded;
       try {
-        decoded = await admin.auth().verifyIdToken(idToken);
+        decoded = await firebaseAdmin.verifyIdToken(idToken);
       } catch (err) {
         console.error('Firebase verifyIdToken error:', err);
         return error(res, 'Token xác thực không hợp lệ', 401);
@@ -57,14 +144,19 @@ const AuthController = {
 
       const { uid, email, name: firebaseName, picture } = decoded;
       const phoneFromToken = decoded.phone_number || null;
+      const tokenProvider = decoded.firebase?.sign_in_provider;
+      const expectedProvider = provider === 'google' ? 'google.com' : provider === 'facebook' ? 'facebook.com' : null;
+      if (!expectedProvider || tokenProvider !== expectedProvider) {
+        return error(res, 'Nhà cung cấp đăng nhập không khớp với token', 401);
+      }
 
-      let user = await UserModel.findBySocialId('firebase', uid);
+      let user = await UserModel.findBySocialId(provider, uid);
 
       if (!user && email) {
         user = await UserModel.findByEmail(email);
         if (user) {
           await UserModel.update(user.id, {
-            auth_provider: 'firebase',
+            auth_provider: provider,
             social_id: uid,
             avatar: user.avatar || picture,
           });
@@ -75,7 +167,7 @@ const AuthController = {
         user = await UserModel.findByPhone(phoneFromToken);
         if (user) {
           await UserModel.update(user.id, {
-            auth_provider: 'firebase',
+            auth_provider: provider,
             social_id: uid,
           });
         }
@@ -88,18 +180,18 @@ const AuthController = {
           email: email || null,
           phone: phoneFromToken || null,
           avatar: picture || null,
-          auth_provider: 'firebase',
+          auth_provider: provider,
           social_id: uid,
           role_id: 3,
         });
       }
 
       const roleName = await getRoleName(user.role_id);
-      const token = generateToken(user, roleName);
+      const tokens = await issueTokens(user, roleName);
       const fullUser = await UserModel.findById(user.id);
 
       return success(res, {
-        token,
+        ...publicTokens(res, tokens),
         user: sanitizeUser(fullUser),
       }, 'Đăng nhập thành công');
     } catch (err) {
@@ -162,11 +254,11 @@ const AuthController = {
       });
 
       const roleName = await getRoleName(user.role_id);
-      const token = generateToken(user, roleName);
+      const tokens = await issueTokens(user, roleName);
       const fullUser = await UserModel.findById(user.id);
 
       return success(res, {
-        token,
+        ...publicTokens(res, tokens),
         user: sanitizeUser(fullUser),
       }, 'Đăng ký thành công', 201);
     } catch (err) {
@@ -188,22 +280,58 @@ const AuthController = {
       if (!name || !password) return error(res, 'Vui lòng nhập họ tên và mật khẩu', 400);
       if (password.length < 6) return error(res, 'Mật khẩu phải có ít nhất 6 ký tự', 400);
 
-      const otp = generateOtp();
       const hashedPassword = await bcrypt.hash(password, 10);
 
       await OtpModel.invalidateByPhone(phone);
-      await OtpModel.createPhone({ phone, otp, name, password: hashedPassword });
+      await OtpModel.createPhone({ phone, otp: 'VERIFY', name, password: hashedPassword });
 
-      const result = await sendSmsOtp(phone, otp, name);
+      const result = await sendSmsOtp(phone);
+
+      if (!result.sent) {
+        await OtpModel.invalidateByPhone(phone);
+        console.error('SMS provider error:', result.error);
+        if (result.code === 21608) {
+          return error(res, 'Tài khoản Twilio Trial chỉ gửi OTP tới số điện thoại đã được xác minh trên Twilio', 403);
+        }
+        return error(res, 'Không thể gửi SMS OTP. Vui lòng kiểm tra cấu hình Twilio hoặc thử lại sau', 502);
+      }
 
       return success(res, {
-        otp_sent: result.sent || result.logged,
-        message: result.sent ? 'Mã OTP đã được gửi đến số điện thoại của bạn' : 'Môi trường phát triển - kiểm tra console để lấy mã OTP',
-        ...(result.logged ? { dev_otp: otp } : {}),
+        otp_sent: true,
+        message: 'Mã OTP đã được gửi đến số điện thoại của bạn',
       }, 'OTP đã được gửi');
     } catch (err) {
       console.error('Send SMS OTP error:', err);
       return error(res, 'Lỗi gửi OTP', 500);
+    }
+  },
+
+  async resendSmsOtp(req, res) {
+    try {
+      const { phone } = req.body;
+      if (!phone || !/^0\d{9}$/.test(phone)) return error(res, 'Số điện thoại không hợp lệ', 400);
+
+      const record = await OtpModel.findLatestPhone(phone);
+      if (!record?.name || !record?.password) {
+        return error(res, 'Phiên đăng ký đã hết hạn, vui lòng nhập lại thông tin', 400);
+      }
+      const elapsed = Date.now() - new Date(record.created_at).getTime();
+      if (elapsed < 60000) return error(res, `Vui lòng chờ ${Math.ceil((60000 - elapsed) / 1000)} giây`, 429);
+
+      await OtpModel.invalidateByPhone(phone);
+      await OtpModel.createPhone({ phone, otp: 'VERIFY', name: record.name, password: record.password });
+      const result = await sendSmsOtp(phone);
+      if (!result.sent) {
+        await OtpModel.invalidateByPhone(phone);
+        if (result.code === 21608) {
+          return error(res, 'Tài khoản Twilio Trial chỉ gửi OTP tới số điện thoại đã được xác minh trên Twilio', 403);
+        }
+        return error(res, 'Không thể gửi lại SMS OTP. Vui lòng thử lại sau', 502);
+      }
+      return success(res, { otp_sent: true }, 'OTP đã được gửi lại');
+    } catch (err) {
+      console.error('Resend SMS OTP error:', err);
+      return error(res, 'Lỗi gửi lại OTP', 500);
     }
   },
 
@@ -212,8 +340,13 @@ const AuthController = {
       const { phone, otp } = req.body;
       if (!phone || !otp) return error(res, 'Vui lòng nhập số điện thoại và mã OTP', 400);
 
-      const record = await OtpModel.verifyPhone(phone, otp);
-      if (!record) return error(res, 'Mã OTP không hợp lệ hoặc đã hết hạn', 400);
+      const record = await OtpModel.findLatestPhone(phone);
+      if (!record) return error(res, 'Phiên đăng ký đã hết hạn, vui lòng đăng ký lại', 400);
+
+      const verification = await checkSmsOtp(phone, otp);
+      if (!verification.approved) {
+        return error(res, verification.error || 'Mã OTP không hợp lệ hoặc đã hết hạn', 400);
+      }
 
       if (!record.name || !record.password) {
         return error(res, 'Dữ liệu đăng ký không đầy đủ, vui lòng đăng ký lại', 400);
@@ -229,11 +362,11 @@ const AuthController = {
       });
 
       const roleName = await getRoleName(user.role_id);
-      const token = generateToken(user, roleName);
+      const tokens = await issueTokens(user, roleName);
       const fullUser = await UserModel.findById(user.id);
 
       return success(res, {
-        token,
+        ...publicTokens(res, tokens),
         user: sanitizeUser(fullUser),
       }, 'Đăng ký thành công', 201);
     } catch (err) {
@@ -242,22 +375,16 @@ const AuthController = {
     }
   },
 
-  // ============== LOGIN (email or phone + password) ==============
+  // ============== LOGIN (email + password) ==============
   async login(req, res) {
     try {
-      const { email, password, phone } = req.body;
-      if ((!email && !phone) || !password) {
-        return error(res, 'Vui lòng nhập email/số điện thoại và mật khẩu', 400);
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return error(res, 'Vui lòng nhập email và mật khẩu', 400);
       }
 
-      let user;
-      if (email) {
-        user = await UserModel.findByEmail(email);
-        if (!user) return error(res, 'Email hoặc mật khẩu không đúng', 401);
-      } else {
-        user = await UserModel.findByPhone(phone);
-        if (!user) return error(res, 'Số điện thoại hoặc mật khẩu không đúng', 401);
-      }
+      const user = await UserModel.findByEmail(email.trim().toLowerCase());
+      if (!user) return error(res, 'Email hoặc mật khẩu không đúng', 401);
 
       if (!user.password) {
         return error(res, 'Tài khoản này được đăng nhập qua mạng xã hội', 400);
@@ -265,16 +392,16 @@ const AuthController = {
 
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) {
-        return error(res, 'Email/số điện thoại hoặc mật khẩu không đúng', 401);
+        return error(res, 'Email hoặc mật khẩu không đúng', 401);
       }
 
       const roleName = await getRoleName(user.role_id);
-      const token = generateToken(user, roleName);
+      const tokens = await issueTokens(user, roleName);
 
       const fullUser = await UserModel.findById(user.id);
 
       return success(res, {
-        token,
+        ...publicTokens(res, tokens),
         user: sanitizeUser(fullUser),
       }, 'Đăng nhập thành công');
     } catch (err) {
@@ -327,11 +454,11 @@ const AuthController = {
       }
 
       const roleName = await getRoleName(user.role_id);
-      const token = generateToken(user, roleName);
+      const tokens = await issueTokens(user, roleName);
       const fullUser = await UserModel.findById(user.id);
 
       return success(res, {
-        token,
+        ...publicTokens(res, tokens),
         user: sanitizeUser(fullUser),
       }, 'Đăng nhập thành công');
     } catch (err) {

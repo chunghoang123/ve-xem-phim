@@ -14,6 +14,17 @@ const SeatHoldModel = {
     try {
       await conn.beginTransaction();
 
+      const [showtimeRows] = await conn.query(
+        `SELECT id FROM showtimes
+         WHERE id = ? AND TIMESTAMP(date, time) > NOW()
+           AND COALESCE(status, 'AVAILABLE') = 'AVAILABLE'
+         FOR UPDATE`,
+        [showtimeId]
+      );
+      if (showtimeRows.length === 0) {
+        throw Object.assign(new Error('Suất chiếu đã bắt đầu hoặc đã bị khóa'), { code: 'SHOWTIME_CLOSED' });
+      }
+
       const placeholders = seatIds.map(() => '?').join(',');
       const [lockedSeats] = await conn.query(
         `SELECT id FROM seats WHERE showtime_id = ? AND id IN (${placeholders}) FOR UPDATE`,

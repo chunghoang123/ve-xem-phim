@@ -25,7 +25,7 @@ const UserModel = {
 
   async findById(id) {
     const [rows] = await pool.query(
-      `SELECT u.id, u.name, u.email, u.phone, u.avatar, u.role_id, r.name as role_name, u.created_at, u.updated_at FROM users u LEFT JOIN roles r ON u.role_id = r.id WHERE u.id = ?`,
+      `SELECT u.id, u.name, u.email, u.phone, u.avatar, u.auth_provider, u.role_id, r.name as role_name, u.created_at, u.updated_at FROM users u LEFT JOIN roles r ON u.role_id = r.id WHERE u.id = ?`,
       [id]
     );
     return rows[0] || null;
@@ -49,16 +49,16 @@ const UserModel = {
     return rows[0] || null;
   },
 
-  async create({ name, email, password, phone, role_id = 3, auth_provider, social_id }) {
+  async create({ name, email, password, phone, avatar, role_id = 3, auth_provider, social_id }) {
     const [result] = await pool.query(
-      'INSERT INTO users (name, email, password, phone, role_id, auth_provider, social_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [name, email || null, password || null, phone || null, role_id, auth_provider || null, social_id || null]
+      'INSERT INTO users (name, email, password, phone, avatar, role_id, auth_provider, social_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [name, email || null, password || null, phone || null, avatar || null, role_id, auth_provider || null, social_id || null]
     );
     return { id: result.insertId, name, email, role_id };
   },
 
   async update(id, fields) {
-    const allowed = ['name', 'email', 'phone', 'avatar', 'role_id'];
+    const allowed = ['name', 'email', 'phone', 'avatar', 'role_id', 'auth_provider', 'social_id'];
     const sets = [];
     const params = [];
     for (const key of allowed) {

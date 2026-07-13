@@ -5,8 +5,8 @@ const { success, error, paginated } = require('../utils/helpers.cjs');
 const ShowtimeController = {
   async getAll(req, res) {
     try {
-      const { page = 1, limit = 20, movie_id, cinema_id, date, province_id, city, brand } = req.query;
-      const result = await ShowtimeModel.findAll({ page, limit, movie_id, cinema_id, date, province_id, city, brand });
+      const { page = 1, limit = 20, movie_id, cinema_id, date, province_id, city, brand, include_past } = req.query;
+      const result = await ShowtimeModel.findAll({ page, limit, movie_id, cinema_id, date, province_id, city, brand, include_past: include_past === 'true' });
       return paginated(res, result.rows, result.total, page, limit);
     } catch {
       return error(res, 'Lỗi lấy danh sách lịch chiếu', 500);
@@ -36,7 +36,8 @@ const ShowtimeController = {
 
       const showtime = await ShowtimeModel.create(req.body);
       return success(res, showtime, 'Thêm lịch chiếu thành công', 201);
-    } catch {
+    } catch (err) {
+      if (err.code === 'SHOWTIME_CONFLICT') return error(res, err.message, 409);
       return error(res, 'Lỗi thêm lịch chiếu', 500);
     }
   },
@@ -157,6 +158,7 @@ const ShowtimeController = {
         cities,
       });
     } catch (err) {
+      if (err.code === 'SHOWTIME_CONFLICT') return error(res, err.message, 409);
       console.error('getByMovieGrouped error:', err);
       return error(res, 'Lỗi lấy lịch chiếu', 500);
     }
@@ -165,7 +167,10 @@ const ShowtimeController = {
   async search(req, res) {
     try {
       const { movie, cinema, date, genre, city, brand } = req.query;
-      const conditions = ['s.date >= CURDATE()'];
+      const conditions = [
+        'TIMESTAMP(s.date, s.time) > NOW()',
+        "COALESCE(s.status, 'AVAILABLE') = 'AVAILABLE'",
+      ];
       const params = [];
 
       if (movie) {

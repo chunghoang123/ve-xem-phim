@@ -5,7 +5,10 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  credentials: true,
+}));
 app.use(express.json());
 
 // Routes
@@ -22,6 +25,7 @@ const chatRoutes = require('./routes/chat.routes.cjs');
 const adminRoutes = require('./routes/admin.routes.cjs');
 const billRoutes = require('./routes/bill.routes.cjs');
 const ticketRoutes = require('./routes/ticket.routes.cjs');
+const concessionRoutes = require('./routes/concession.routes.cjs');
 
 // API v1 routes (new PayOS flow)
 const bookingV1Routes = require('./routes/v1/booking.routes.cjs');
@@ -41,6 +45,7 @@ app.use('/api/ai/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/bills', billRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/concessions', concessionRoutes);
 
 // API v1 routes
 app.use('/api/v1', bookingV1Routes);

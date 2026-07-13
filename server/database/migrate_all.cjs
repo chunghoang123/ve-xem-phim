@@ -85,11 +85,48 @@ async function migrateAll() {
     `);
     console.log('  payment_webhook_logs OK');
 
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS refresh_tokens (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        jti VARCHAR(36) NOT NULL UNIQUE,
+        user_id INT NOT NULL,
+        token_hash CHAR(64) NOT NULL,
+        expires_at DATETIME NOT NULL,
+        revoked_at DATETIME NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        INDEX idx_refresh_user (user_id),
+        INDEX idx_refresh_expiry (expires_at, revoked_at)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS token_blacklist (
+        jti VARCHAR(36) PRIMARY KEY,
+        user_id INT NOT NULL,
+        expires_at DATETIME NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_blacklist_expiry (expires_at)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    console.log('  refresh tokens and blacklist OK');
+
+    await conn.query(`CREATE TABLE IF NOT EXISTS concessions (
+      id VARCHAR(50) PRIMARY KEY, name VARCHAR(120) NOT NULL, description VARCHAR(255),
+      price INT NOT NULL, image VARCHAR(255), stock INT NOT NULL DEFAULT 0,
+      status ENUM('ACTIVE','INACTIVE') DEFAULT 'ACTIVE', updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
+    await conn.query(`INSERT IGNORE INTO concessions (id,name,description,price,image,stock) VALUES
+      ('popcorn','Bắp rang','Bắp rang giòn vị bơ',45000,'/concessions/popcorn.png',100),
+      ('soft_drink','Nước ngọt','Ly nước ngọt mát lạnh',30000,'/concessions/soft-drink.png',100),
+      ('popcorn_combo','Combo 1 bắp + 2 nước','Tiết kiệm hơn khi đi cùng nhau',99000,'/concessions/popcorn-combo.png',100)`);
+    await conn.query(`CREATE TABLE IF NOT EXISTS app_settings (setting_key VARCHAR(80) PRIMARY KEY, setting_value VARCHAR(255) NOT NULL)`);
+    await conn.query("INSERT IGNORE INTO app_settings(setting_key,setting_value) VALUES ('showtime_days_ahead','7')");
+
     // --- V3: Alter existing tables ---
     const addColIfMissing = async (table, col, def) => {
       const [rows] = await conn.query(`SHOW COLUMNS FROM ?? LIKE ?`, [table, col]);
       if (rows.length === 0) {
-        await conn.query(`ALTER TABLE ?? ADD COLUMN ${def}`, [table]);
+        await conn.query(`ALTER TABLE ?? ADD COLUMN ?? ${def}`, [table, col]);
         console.log(`  ${table}.${col} added`);
       } else {
         console.log(`  ${table}.${col} already exists`);
@@ -103,6 +140,7 @@ async function migrateAll() {
     await addColIfMissing('bookings', 'confirmed_at', 'TIMESTAMP NULL');
     await addColIfMissing('bookings', 'cancelled_at', 'TIMESTAMP NULL');
     await addColIfMissing('bookings', 'expires_at', 'TIMESTAMP NULL');
+    await addColIfMissing('bookings', 'concessions_json', 'JSON NULL');
 
     const [idxRows] = await conn.query(
       "SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'bookings' AND INDEX_NAME = 'idx_status_expires'"

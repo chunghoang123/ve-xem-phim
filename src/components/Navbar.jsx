@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Film, User, ChevronDown, LogOut, Shield, Mail, Lock, AlertCircle, Smartphone, KeyRound, Phone, CheckCircle, Loader2 } from "lucide-react";
+import { Menu, X, Film, User, ChevronDown, LogOut, Shield, Mail, Lock, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { api } from "../lib/api";
 import { useAuth } from "../lib/auth-context";
@@ -79,6 +79,11 @@ export default function Navbar() {
 
   useEffect(() => { setMobileOpen(false); setShowDropdown(false); }, [location.pathname]);
   useEffect(() => {
+    const openLoginModal = () => setShowAuth(true);
+    window.addEventListener('cinex:open-login', openLoginModal);
+    return () => window.removeEventListener('cinex:open-login', openLoginModal);
+  }, []);
+  useEffect(() => {
     if (mobileOpen) { document.body.style.overflow = "hidden"; }
     else { document.body.style.overflow = ""; }
     return () => { document.body.style.overflow = ""; };
@@ -129,8 +134,10 @@ export default function Navbar() {
                 <div className="relative">
                   <button onClick={() => setShowDropdown(!showDropdown)}
                     className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted hover:bg-border transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-sm font-bold text-white shrink-0">
-                      {user.name?.charAt(0)?.toUpperCase() || "U"}
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-sm font-bold text-white shrink-0 overflow-hidden">
+                      {user.avatar
+                        ? <img src={user.avatar} alt={user.name || "Ảnh đại diện"} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        : user.name?.charAt(0)?.toUpperCase() || "U"}
                     </div>
                     <span className="hidden sm:block text-sm font-medium max-w-[80px] truncate">{user.name}</span>
                     <ChevronDown className="w-4 h-4 text-muted-foreground" />
@@ -220,32 +227,23 @@ export default function Navbar() {
 
 function AuthModal({ onClose, onLoginSuccess }) {
   const [mode, setMode] = useState("login");
-  const [registerData, setRegisterData] = useState({ phone: '', name: '' });
-
-  const handleRegisterSuccess = (data) => {
-    setRegisterData(data);
-    setMode("verify");
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm animate-fade" onClick={onClose}>
       <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-sm p-6 animate-scale" onClick={(e) => e.stopPropagation()}>
         {mode === "login" && <LoginForm onLoginSuccess={onLoginSuccess} onSwitch={() => setMode("register")} />}
-        {mode === "register" && <RegisterForm onClose={onClose} onSwitch={() => setMode("login")} onOtpSent={handleRegisterSuccess} />}
-        {mode === "verify" && <VerifyOtpForm onClose={onClose} phone={registerData.phone} onSwitch={() => setMode("register")} />}
+        {mode === "register" && <RegisterForm onClose={onClose} onSwitch={() => setMode("login")} />}
       </div>
     </div>
   );
 }
 
 function LoginForm({ onLoginSuccess, onSwitch }) {
-  const [loginMethod, setLoginMethod] = useState("email");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login, loginWithPhone } = useAuth();
+  const { login, completeExternalLogin } = useAuth();
 
   const firebaseSocialLogin = async (provider) => {
     setError(""); setLoading(true);
@@ -254,29 +252,34 @@ function LoginForm({ onLoginSuccess, onSwitch }) {
       const idToken = await result.user.getIdToken();
       const providerName = provider === googleProvider ? 'google' : 'facebook';
       const res = await api.post('/auth/firebase-login', { idToken, provider: providerName });
-      setToken(res.data.token);
-      window.location.reload();
+      completeExternalLogin(res.data);
+      onLoginSuccess();
     } catch (err) {
       if (err.code === 'auth/popup-closed-by-user') return;
-      setError(err.data?.message || "Đăng nhập thất bại");
+      console.error('Social login failed:', err);
+      const firebaseErrors = {
+        'auth/account-exists-with-different-credential': 'Email này đã đăng nhập bằng phương thức khác (ví dụ Google). Hãy đăng nhập bằng phương thức cũ trước.',
+        'auth/operation-not-allowed': 'Đăng nhập Facebook chưa được bật đúng trong Firebase Authentication.',
+        'auth/unauthorized-domain': 'Tên miền hiện tại chưa được cho phép trong Firebase Authentication.',
+        'auth/popup-blocked': 'Trình duyệt đã chặn cửa sổ đăng nhập Facebook. Hãy cho phép popup rồi thử lại.',
+        'auth/network-request-failed': 'Không thể kết nối tới dịch vụ đăng nhập. Hãy kiểm tra mạng rồi thử lại.',
+        'auth/internal-error': 'Firebase không thể hoàn tất đăng nhập Facebook. Hãy kiểm tra lại App ID và App Secret.',
+      };
+      const details = err.customData?._tokenResponse?.errorMessage || err.message;
+      setError(
+        err.data?.message || firebaseErrors[err.code] ||
+        (err.code ? `${err.code}: ${details || 'Đăng nhập Facebook thất bại'}` : 'Đăng nhập Facebook thất bại')
+      );
     } finally { setLoading(false); }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault(); setError("");
-    if (loginMethod === "email") {
-      if (!email.trim() || !password.trim()) { setError("Vui lòng nhập email và mật khẩu"); return; }
-      setLoading(true);
-      try { await login(email.trim(), password); onLoginSuccess(); }
-      catch (err) { setError(err.data?.message || "Đăng nhập thất bại"); }
-      finally { setLoading(false); }
-    } else {
-      if (!phone.trim() || !password.trim()) { setError("Vui lòng nhập số điện thoại và mật khẩu"); return; }
-      setLoading(true);
-      try { await loginWithPhone(phone.trim(), password); onLoginSuccess(); }
-      catch (err) { setError(err.data?.message || "Đăng nhập thất bại"); }
-      finally { setLoading(false); }
-    }
+    if (!email.trim() || !password.trim()) { setError("Vui lòng nhập email và mật khẩu"); return; }
+    setLoading(true);
+    try { await login(email.trim(), password); onLoginSuccess(); }
+    catch (err) { setError(err.data?.message || "Đăng nhập thất bại"); }
+    finally { setLoading(false); }
   };
 
   return (
@@ -287,30 +290,11 @@ function LoginForm({ onLoginSuccess, onSwitch }) {
       {error && <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm"><AlertCircle className="w-4 h-4 shrink-0" />{error}</div>}
 
       <div className="space-y-4">
-        <div className="flex border border-border rounded-xl overflow-hidden">
-          <button type="button" onClick={() => setLoginMethod("email")}
-            className={cn("flex-1 py-2.5 text-sm font-medium transition-colors", loginMethod === "email" ? "bg-purple-500/20 text-purple-400" : "text-muted-foreground hover:text-foreground")}>
-            <Mail className="w-4 h-4 inline mr-1.5" />Email
-          </button>
-          <button type="button" onClick={() => setLoginMethod("phone")}
-            className={cn("flex-1 py-2.5 text-sm font-medium transition-colors", loginMethod === "phone" ? "bg-purple-500/20 text-purple-400" : "text-muted-foreground hover:text-foreground")}>
-            <Phone className="w-4 h-4 inline mr-1.5" />SĐT
-          </button>
+        <div className="relative">
+          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email"
+            className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" autoFocus />
         </div>
-
-        {loginMethod === "email" ? (
-          <div className="relative">
-            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email"
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" autoFocus />
-          </div>
-        ) : (
-          <div className="relative">
-            <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input type="tel" value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="Số điện thoại"
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" autoFocus />
-          </div>
-        )}
 
         <div className="relative">
           <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -349,66 +333,25 @@ function LoginForm({ onLoginSuccess, onSwitch }) {
   );
 }
 
-function VerifyOtpForm({ onClose, phone, onSwitch }) {
-  const [otp, setOtp] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault(); setError("");
-    if (otp.length !== 6) { setError("Mã OTP gồm 6 chữ số"); return; }
-    setLoading(true);
-    try {
-      const res = await api.post('/auth/verify-sms-otp', { phone, otp });
-      setToken(res.data.token);
-      window.location.reload();
-    } catch (err) { setError(err.data?.message || "Mã OTP không hợp lệ"); }
-    finally { setLoading(false); }
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <h2 className="text-xl font-bold mb-1">Xác thực số điện thoại</h2>
-      <p className="text-muted-foreground text-sm mb-6">Nhập mã 6 chữ số được gửi đến <strong className="text-foreground">{phone}</strong></p>
-      {error && <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm"><AlertCircle className="w-4 h-4 shrink-0" />{error}</div>}
-      <div className="relative">
-        <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <input type="text" value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-          placeholder="000000" maxLength={6}
-          className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm text-center text-2xl font-bold tracking-widest" autoFocus />
-      </div>
-      <div className="flex gap-3 mt-5">
-        <button type="button" onClick={onClose}
-          className="flex-1 px-4 py-3 rounded-xl border border-border text-muted-foreground hover:bg-muted transition-colors text-sm font-medium">Hủy</button>
-        <button type="submit" disabled={loading || otp.length !== 6}
-          className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-500/20 disabled:opacity-50">
-          {loading ? "Đang xác thực..." : "Xác thực"}
-        </button>
-      </div>
-      <p className="text-center text-xs text-muted-foreground mt-4">
-        Không nhận được mã? <button type="button" onClick={onSwitch} className="text-purple-400 hover:underline font-medium">Gửi lại</button>
-      </p>
-    </form>
-  );
-}
-
-function RegisterForm({ onClose, onSwitch, onOtpSent }) {
-  const [phone, setPhone] = useState("");
+function RegisterForm({ onClose, onSwitch }) {
+  const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { completeExternalLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault(); setError("");
-    if (!name.trim() || !phone.trim() || !password.trim()) { setError("Vui lòng nhập đầy đủ thông tin"); return; }
-    if (!/^0\d{9}$/.test(phone.trim())) { setError("Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0)"); return; }
+    if (!name.trim() || !email.trim() || !password.trim()) { setError("Vui lòng nhập đầy đủ thông tin"); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setError("Email không hợp lệ"); return; }
     if (password.length < 6) { setError("Mật khẩu phải có ít nhất 6 ký tự"); return; }
     setLoading(true);
     try {
-      await api.post('/auth/send-sms-otp', { phone: phone.trim(), name: name.trim(), password });
-      onOtpSent({ phone: phone.trim(), name: name.trim() });
-    } catch (err) { setError(err.data?.message || "Lỗi gửi OTP"); }
+      const res = await api.post('/auth/register', { email: email.trim(), name: name.trim(), password });
+      completeExternalLogin(res.data);
+      onClose();
+    } catch (err) { setError(err.data?.message || "Đăng ký thất bại"); }
     finally { setLoading(false); }
   };
 
@@ -424,8 +367,8 @@ function RegisterForm({ onClose, onSwitch, onOtpSent }) {
             className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" autoFocus />
         </div>
         <div className="relative">
-          <Smartphone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input type="tel" value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="Số điện thoại"
+          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email"
             className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" />
         </div>
         <div className="relative">
@@ -439,7 +382,7 @@ function RegisterForm({ onClose, onSwitch, onOtpSent }) {
           className="flex-1 px-4 py-3 rounded-xl border border-border text-muted-foreground hover:bg-muted transition-colors text-sm font-medium">Hủy</button>
         <button type="submit" disabled={loading}
           className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-500/20 disabled:opacity-50">
-          {loading ? "Đang gửi..." : "Gửi mã xác thực"}
+          {loading ? "Đang đăng ký..." : "Đăng ký"}
         </button>
       </div>
       <p className="text-center text-xs text-muted-foreground mt-4">

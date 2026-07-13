@@ -75,7 +75,11 @@ export default function Showtimes() {
     }
   }, [userCoords, selectedRadius, selectedBrand, selectedCity]);
 
-  useEffect(() => { fetchShowtimes(); }, [fetchShowtimes]);
+  useEffect(() => {
+    fetchShowtimes();
+    const refreshId = setInterval(fetchShowtimes, 60000);
+    return () => clearInterval(refreshId);
+  }, [fetchShowtimes]);
 
   useEffect(() => {
     if (userCoords) {

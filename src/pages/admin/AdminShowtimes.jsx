@@ -2,27 +2,34 @@ import { useState, useEffect, useCallback } from "react";
 import { Plus, Trash2, X } from "lucide-react";
 import { formatDate, handleImgError } from "../../lib/utils";
 import { api } from "../../lib/api";
+import Pagination from "../../components/Pagination";
 
 export default function AdminShowtimes() {
   const [showtimes, setShowtimes] = useState([]);
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchMovie] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
+  const [daysAhead, setDaysAhead] = useState(7);
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const params = searchMovie ? `?search=${searchMovie}` : '';
-      const res = await api.get(`/showtimes?limit=50${params}`);
+      const params = searchMovie ? `?search=${searchMovie}&page=${page}&limit=10&include_past=true` : `?page=${page}&limit=10&include_past=true`;
+      const res = await api.get(`/showtimes${params}`);
       setShowtimes(res.data);
+      setTotalPages(res.pagination.totalPages);
+      setTotal(res.pagination.total);
     } catch (err) {
       setError(err.data?.message || "Lỗi tải dữ liệu");
     } finally {
       setLoading(false);
     }
-  }, [searchMovie]);
+  }, [searchMovie, page]);
 
   const fetchMovies = useCallback(async () => {
     try {
@@ -32,6 +39,7 @@ export default function AdminShowtimes() {
   }, []);
 
   useEffect(() => { fetchData(); fetchMovies(); }, [fetchData, fetchMovies]);
+  useEffect(() => { api.get('/admin/schedule-settings').then(r => setDaysAhead(r.data.days_ahead)).catch(()=>{}); }, []);
 
   const handleDelete = async (id) => {
     if (!confirm("Xóa lịch chiếu này?")) return;
@@ -58,7 +66,7 @@ export default function AdminShowtimes() {
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">Quản lý lịch chiếu</h1>
-          <p className="text-muted-foreground text-sm mt-1">{showtimes.length} suất chiếu</p>
+          <p className="text-muted-foreground text-sm mt-1">{total} suất chiếu</p>
         </div>
         <button
           onClick={() => setShowForm(true)}
@@ -67,6 +75,13 @@ export default function AdminShowtimes() {
           <Plus className="w-4 h-4" />
           <span className="hidden sm:inline">Thêm suất chiếu</span>
         </button>
+      </div>
+
+      <div className="mb-5 flex items-center gap-3 rounded-xl border border-border bg-card p-4 text-sm">
+        <span className="font-medium">Tự tạo lịch trước</span>
+        <input type="number" min="1" max="30" value={daysAhead} onChange={e=>setDaysAhead(+e.target.value)} className="w-20 rounded-lg bg-muted p-2" />
+        <span>ngày</span>
+        <button onClick={()=>api.put('/admin/schedule-settings',{days_ahead:daysAhead})} className="rounded-lg bg-purple-500 px-3 py-2 text-white">Lưu cấu hình</button>
       </div>
 
       {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
@@ -115,6 +130,8 @@ export default function AdminShowtimes() {
           <p className="text-center py-10 text-muted-foreground text-sm">Không tìm thấy lịch chiếu</p>
         )}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
 
       {showForm && (
         <ShowtimeFormModal

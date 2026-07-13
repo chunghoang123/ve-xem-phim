@@ -3,7 +3,7 @@ const pool = require('../config/database.cjs');
 const BookingModel = {
   async findHistoryByUser(userId) {
     const [rows] = await pool.query(
-      `SELECT b.id, b.code AS booking_code, b.status, b.total, b.payment_method, b.seats_json,
+      `SELECT b.id, b.code AS booking_code, b.status, b.total, b.payment_method, b.seats_json, b.concessions_json,
               b.created_at, b.paid_at, b.confirmed_at, b.cancelled_at,
               m.title AS movie_title, m.poster AS movie_poster,
               s.date AS show_date, s.time AS show_time,

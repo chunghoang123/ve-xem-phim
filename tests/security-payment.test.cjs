@@ -1,0 +1,4 @@
+const test=require('node:test'); const assert=require('node:assert/strict'); const {calculateConcessions}=require('../server/config/concessions.cjs'); const {calculateBookingTotal}=require('../server/utils/billing.cjs');
+test('bắp được cộng chính xác vào bill',()=>{const food=calculateConcessions([{id:'popcorn',quantity:1}]);assert.equal(food.total,45000);assert.deepEqual(calculateBookingTotal(150000,food.total),{serviceFee:3000,totalAmount:198000});});
+test('không nhận giá do client tự gửi',()=>{const x=calculateConcessions([{id:'popcorn',quantity:1,price:1}]);assert.equal(x.total,45000);});
+test('từ chối mã sản phẩm lạ và giới hạn số lượng',()=>{const x=calculateConcessions([{id:'hack',quantity:10},{id:'soft_drink',quantity:999}]);assert.equal(x.items.length,1);assert.equal(x.items[0].quantity,10);});

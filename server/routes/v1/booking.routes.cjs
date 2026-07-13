@@ -8,5 +8,6 @@ router.delete('/seat-holds/:holdCode', authenticate, BookingV1Controller.release
 router.post('/bookings', authenticate, BookingV1Controller.createBooking);
 router.get('/bookings/history', authenticate, BookingV1Controller.history);
 router.get('/bookings/:bookingCode/bill', authenticate, BookingV1Controller.getBill);
+router.delete('/bookings/:bookingCode', authenticate, BookingV1Controller.cancelBooking);
 
 module.exports = router;

@@ -1,16 +1,27 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, ExternalLink, AlertCircle, Loader2, Clock, Check, Copy, X } from "lucide-react";
+import { ArrowLeft, ExternalLink, AlertCircle, Loader2, Clock, Check, Copy, X, Plus, Minus } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { formatCurrency } from "../lib/utils";
 import { useAuth } from "../lib/auth-context";
 import { api } from "../lib/api";
 
+const CONCESSIONS = [
+  { id: 'popcorn', name: 'Bắp rang', description: 'Bắp rang giòn vị bơ', price: 45000, image: '/concessions/popcorn.png' },
+  { id: 'soft_drink', name: 'Nước ngọt', description: 'Ly nước ngọt mát lạnh', price: 30000, image: '/concessions/soft-drink.png' },
+  { id: 'popcorn_combo', name: 'Combo 1 bắp + 2 nước', description: 'Tiết kiệm hơn khi đi cùng nhau', price: 99000, image: '/concessions/popcorn-combo.png' },
+];
+
+function formatConcessions(items) {
+  if (!Array.isArray(items) || items.length === 0) return 'Không chọn';
+  return items.map(item => `${item.name} × ${item.quantity}`).join(', ');
+}
+
 export default function Checkout() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const holdCode = searchParams.get("holdCode") || "";
 
   const [movie, setMovie] = useState(null);
@@ -18,6 +29,8 @@ export default function Checkout() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [concessionProducts, setConcessionProducts] = useState(CONCESSIONS);
+  const [concessionQuantities, setConcessionQuantities] = useState({});
 
   const [booking, setBooking] = useState(null);
   const [payment, setPayment] = useState(null);
@@ -27,9 +40,45 @@ export default function Checkout() {
   const [copiedField, setCopiedField] = useState("");
   const [now, setNow] = useState(Date.now());
   const holdConsumed = useRef(false);
+  const bookingRef = useRef(null);
+  const paymentRef = useRef(null);
+  const paymentStatusRef = useRef('idle');
+  const releaseHandled = useRef(false);
+  const backGuardInstalled = useRef(false);
   const payOSCheckoutRef = useRef(null);
 
   const cinemaId = Number(searchParams.get("cinema")) || 1;
+
+  useEffect(() => { bookingRef.current = booking; }, [booking]);
+  useEffect(() => { paymentRef.current = payment; }, [payment]);
+  useEffect(() => { paymentStatusRef.current = paymentStatus; }, [paymentStatus]);
+
+  useEffect(() => {
+    if (!backGuardInstalled.current) {
+      window.history.pushState({ ...window.history.state, cinexCheckoutGuard: true }, '', window.location.href);
+      backGuardInstalled.current = true;
+    }
+
+    const releaseOnBrowserBack = async () => {
+      if (releaseHandled.current || paymentStatusRef.current === 'paid') {
+        window.history.back();
+        return;
+      }
+      const activePayment = paymentRef.current;
+      const activeBooking = bookingRef.current;
+      releaseHandled.current = true;
+      if (activePayment?.order_code && paymentStatusRef.current === 'pending') {
+        await api.post(`/v1/payments/order/${activePayment.order_code}/cancel`, {}).catch(() => {});
+      } else if (activeBooking?.booking_code) {
+        await api.delete(`/v1/bookings/${activeBooking.booking_code}`).catch(() => {});
+      } else if (holdCode && !holdConsumed.current) {
+        await api.delete(`/v1/seat-holds/${holdCode}`).catch(() => {});
+      }
+      window.history.back();
+    };
+    window.addEventListener('popstate', releaseOnBrowserBack);
+    return () => window.removeEventListener('popstate', releaseOnBrowserBack);
+  }, [holdCode]);
 
   useEffect(() => {
     Promise.all([
@@ -40,6 +89,8 @@ export default function Checkout() {
       setCinema(cinemaRes.data);
     }).catch(() => {}).finally(() => setLoading(false));
   }, [id, cinemaId]);
+
+  useEffect(() => { api.get('/concessions').then(r => { if(r.data?.length) setConcessionProducts(r.data); }).catch(()=>{}); }, []);
 
   useEffect(() => {
     if (!payment || payment.status !== 'PENDING') return;
@@ -117,12 +168,19 @@ export default function Checkout() {
   }, [embeddedPayment]);
 
   const handleSubmit = async () => {
+    if (!user) {
+      window.dispatchEvent(new CustomEvent('cinex:open-login'));
+      return;
+    }
     setError("");
     setSubmitting(true);
     try {
       let activeBooking = booking;
       if (!activeBooking) {
-        const bookingRes = await api.post('/v1/bookings', { seat_hold_code: holdCode });
+        const concessions = Object.entries(concessionQuantities)
+          .filter(([, quantity]) => quantity > 0)
+          .map(([productId, quantity]) => ({ id: productId, quantity }));
+        const bookingRes = await api.post('/v1/bookings', { seat_hold_code: holdCode, concessions });
         activeBooking = bookingRes.data;
         holdConsumed.current = true;
         setBooking(activeBooking);
@@ -140,7 +198,20 @@ export default function Checkout() {
   };
 
   const handleBack = async () => {
-    if (holdCode && !holdConsumed.current) {
+    releaseHandled.current = true;
+    if (payment?.order_code && paymentStatus === 'pending') {
+      try {
+        await api.post(`/v1/payments/order/${payment.order_code}/cancel`, {});
+      } catch {
+        // Status reconciliation will safely ignore an already completed payment.
+      }
+    } else if (booking?.booking_code && paymentStatus !== 'paid') {
+      try {
+        await api.delete(`/v1/bookings/${booking.booking_code}`);
+      } catch {
+        // The server may already have expired or cancelled this booking.
+      }
+    } else if (holdCode && !holdConsumed.current) {
       try {
         await api.delete(`/v1/seat-holds/${holdCode}`);
         holdConsumed.current = true;
@@ -176,6 +247,7 @@ export default function Checkout() {
   const cancelPayment = async () => {
     try {
       await api.post(`/v1/payments/order/${payment.order_code}/cancel`, {});
+      releaseHandled.current = true;
       setShowPaymentScreen(false);
       setPaymentStatus("cancelled");
       navigate("/profile?tab=bookings");
@@ -184,26 +256,17 @@ export default function Checkout() {
     }
   };
 
-    if (!authLoading && !user) {
-    return (
-      <div className="min-h-screen pt-24 flex items-center justify-center px-4">
-        <div className="bg-card border border-border rounded-2xl p-8 max-w-md w-full text-center animate-scale">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mx-auto mb-5">
-            <AlertCircle className="w-8 h-8 text-white" />
-          </div>
-          <h2 className="text-xl font-bold mb-2">Vui lòng đăng nhập</h2>
-          <p className="text-muted-foreground text-sm mb-6">Bạn cần đăng nhập để đặt vé.</p>
-          <div className="flex gap-3">
-            <button onClick={() => navigate(-1)}
-              className="flex-1 px-4 py-3 rounded-xl border border-border text-muted-foreground hover:bg-muted transition-colors text-sm font-medium">Quay lại</button>
-            <Link to="/"
-              className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold text-center">Về trang chủ</Link>
-          </div>
-          <p className="text-center text-xs text-muted-foreground mt-3">Vui lòng đăng nhập từ nút "Đăng nhập" trên thanh điều hướng.</p>
-        </div>
-      </div>
-    );
-  }
+  const updateConcession = (id, change) => {
+    setConcessionQuantities(current => ({
+      ...current,
+      [id]: Math.max(0, Math.min(10, (current[id] || 0) + change)),
+    }));
+  };
+
+  const concessionsTotal = concessionProducts.reduce(
+    (sum, item) => sum + item.price * (concessionQuantities[item.id] || 0),
+    0
+  );
 
   if (loading) {
     return (
@@ -356,6 +419,7 @@ export default function Checkout() {
                             ["Địa chỉ", booking.cinema_address || cinema?.address],
                             ["Phòng chiếu", booking.room_name],
                             ["Vị trí ghế", Array.isArray(booking.seat_codes) ? booking.seat_codes.join(", ") : booking.seat_codes],
+                            ["Bắp & nước", formatConcessions(booking.concessions)],
                             ["Ngày chiếu", booking.show_date],
                             ["Giờ chiếu", booking.show_time],
                           ].map(([label, value]) => (
@@ -364,6 +428,23 @@ export default function Checkout() {
                               <p className="mt-0.5 text-sm font-semibold">{value || "—"}</p>
                             </div>
                           ))}
+                        </div>
+                      </div>
+
+                      <div className="mt-5 rounded-2xl border border-border bg-background/40 p-4 text-sm">
+                        <h3 className="mb-3 font-bold">Chi tiết hóa đơn</h3>
+                        <div className="space-y-2">
+                          <div className="flex justify-between"><span className="text-muted-foreground">Tiền vé</span><span>{formatCurrency(booking.subtotal)}</span></div>
+                          <div className="flex justify-between"><span className="text-muted-foreground">Phí dịch vụ</span><span>{formatCurrency(booking.service_fee)}</span></div>
+                          {(booking.concessions || []).map(item => (
+                            <div key={item.id} className="flex justify-between gap-3">
+                              <span className="text-muted-foreground">{item.name} × {item.quantity}</span>
+                              <span>{formatCurrency(item.line_total)}</span>
+                            </div>
+                          ))}
+                          <div className="flex justify-between border-t border-border pt-2 font-bold">
+                            <span>Tổng thanh toán</span><span className="text-purple-400">{formatCurrency(booking.total_amount)}</span>
+                          </div>
                         </div>
                       </div>
 
@@ -493,6 +574,60 @@ export default function Checkout() {
                 <p className="text-xs sm:text-sm text-muted-foreground">
                   Ghế đã chọn: <span className="font-medium text-purple-400">{holdCode ? "Đã giữ" : ""}</span>
                 </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 mb-5 animate-enter" style={{ animationDelay: "0.1s" }}>
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <div>
+              <h2 className="font-semibold text-sm sm:text-base">Bắp rang & nước uống</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">Chọn thêm món bạn muốn dùng trong lúc xem phim</p>
+            </div>
+            {concessionsTotal > 0 && <span className="font-bold text-purple-400 text-sm">+{formatCurrency(concessionsTotal)}</span>}
+          </div>
+          <div className="space-y-3">
+            {concessionProducts.map(item => {
+              const quantity = concessionQuantities[item.id] || 0;
+              return (
+                <div key={item.id} className={`flex items-center gap-3 rounded-xl border p-3 transition-colors ${quantity ? 'border-purple-500/50 bg-purple-500/5' : 'border-border bg-background/30'}`}>
+                  <img src={item.image} alt={item.name} className="w-14 h-14 rounded-xl object-cover shrink-0 border border-border" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold">{item.name}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{item.description}</p>
+                    <p className="text-sm font-bold text-purple-400 mt-0.5">{formatCurrency(item.price)}</p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button type="button" onClick={() => updateConcession(item.id, -1)} disabled={!quantity}
+                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted disabled:opacity-30">
+                      <Minus className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="w-5 text-center text-sm font-bold">{quantity}</span>
+                    <button type="button" onClick={() => updateConcession(item.id, 1)}
+                      className="w-8 h-8 rounded-lg bg-purple-500 text-white flex items-center justify-center hover:bg-purple-600">
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {concessionsTotal > 0 && (
+          <div className="bg-card border border-border rounded-2xl p-4 sm:p-5 mb-5 text-sm">
+            <h2 className="font-semibold mb-3">Tạm tính bắp nước</h2>
+            <div className="space-y-2">
+              {concessionProducts.filter(item => concessionQuantities[item.id] > 0).map(item => (
+                <div key={item.id} className="flex justify-between gap-3">
+                  <span className="text-muted-foreground">{item.name} × {concessionQuantities[item.id]}</span>
+                  <span className="font-medium">{formatCurrency(item.price * concessionQuantities[item.id])}</span>
+                </div>
+              ))}
+              <div className="flex justify-between gap-3 border-t border-border pt-2 font-bold">
+                <span>Cộng vào hóa đơn</span>
+                <span className="text-purple-400">{formatCurrency(concessionsTotal)}</span>
               </div>
             </div>
           </div>

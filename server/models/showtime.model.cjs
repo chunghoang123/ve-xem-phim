@@ -1,9 +1,9 @@
 const pool = require('../config/database.cjs');
 
 const ShowtimeModel = {
-  async findAll({ page = 1, limit = 20, movie_id, cinema_id, date, province_id, city, brand, _search = '' }) {
+  async findAll({ page = 1, limit = 20, movie_id, cinema_id, date, province_id, city, brand, include_past = false, _search = '' }) {
     const offset = (page - 1) * limit;
-    const conditions = [];
+    const conditions = include_past ? [] : ["TIMESTAMP(s.date, s.time) > NOW()", "COALESCE(s.status, 'AVAILABLE') = 'AVAILABLE'"];
     const params = [];
 
     if (movie_id) { conditions.push('s.movie_id = ?'); params.push(movie_id); }
@@ -45,10 +45,30 @@ const ShowtimeModel = {
     return rows[0] || null;
   },
 
+  async isBookable(id, conn = pool) {
+    const [rows] = await conn.query(
+      `SELECT id FROM showtimes
+       WHERE id = ? AND TIMESTAMP(date, time) > NOW()
+         AND COALESCE(status, 'AVAILABLE') = 'AVAILABLE'
+       LIMIT 1`,
+      [id]
+    );
+    return rows.length > 0;
+  },
+
   async create(data) {
+    if (data.screen_id) {
+      const [conflicts] = await pool.query(
+        `SELECT id FROM showtimes WHERE screen_id=? AND status='AVAILABLE'
+         AND TIMESTAMP(date,time) < DATE_ADD(TIMESTAMP(?,?), INTERVAL ? MINUTE)
+         AND COALESCE(end_time,DATE_ADD(TIMESTAMP(date,time),INTERVAL 120 MINUTE)) > TIMESTAMP(?,?) LIMIT 1`,
+        [data.screen_id,data.date,data.time,Number(data.duration)||120,data.date,data.time]
+      );
+      if(conflicts.length) throw Object.assign(new Error('Phòng chiếu đã có suất trùng giờ'),{code:'SHOWTIME_CONFLICT'});
+    }
     const [result] = await pool.query(
-      'INSERT INTO showtimes (movie_id, cinema_id, date, time) VALUES (?, ?, ?, ?)',
-      [data.movie_id, data.cinema_id || 1, data.date, data.time]
+      'INSERT INTO showtimes (movie_id, cinema_id, screen_id, date, time, status) VALUES (?, ?, ?, ?, ?, ?)',
+      [data.movie_id, data.cinema_id || 1, data.screen_id || null, data.date, data.time, 'AVAILABLE']
     );
     return { id: result.insertId, ...data };
   },
@@ -85,7 +105,11 @@ const ShowtimeModel = {
   },
 
   async findByMovieGrouped(movieId, filters = {}) {
-    const conditions = ['s.movie_id = ?'];
+    const conditions = [
+      's.movie_id = ?',
+      'TIMESTAMP(s.date, s.time) > NOW()',
+      "COALESCE(s.status, 'AVAILABLE') = 'AVAILABLE'",
+    ];
     const params = [movieId];
 
     if (filters.province_id) {

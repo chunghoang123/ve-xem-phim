@@ -1,11 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { Search, Plus, Pencil, Trash2, X } from "lucide-react";
 import { api } from "../../lib/api";
+import Pagination from "../../components/Pagination";
 
 export default function AdminCinemas() {
   const [cinemas, setCinemas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [editing, setEditing] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
@@ -13,14 +17,20 @@ export default function AdminCinemas() {
   const fetchCinemas = useCallback(async () => {
     try {
       setLoading(true);
-      const params = search ? `?search=${search}` : '';
-      const res = await api.get(`/cinemas?limit=50${params}`);
+      const params = search ? `?search=${search}&page=${page}&limit=10` : `?page=${page}&limit=10`;
+      const res = await api.get(`/cinemas${params}`);
       setCinemas(res.data);
+      setTotalPages(res.pagination.totalPages);
+      setTotal(res.pagination.total);
     } catch (err) {
       setError(err.data?.message || "Lỗi tải dữ liệu");
     } finally {
       setLoading(false);
     }
+  }, [search, page]);
+
+  useEffect(() => {
+    setPage(1);
   }, [search]);
 
   useEffect(() => { const t = setTimeout(fetchCinemas, 300); return () => clearTimeout(t); }, [fetchCinemas]);
@@ -55,7 +65,7 @@ export default function AdminCinemas() {
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">Quản lý rạp chiếu</h1>
-          <p className="text-muted-foreground text-sm mt-1">{cinemas.length} rạp</p>
+          <p className="text-muted-foreground text-sm mt-1">{total} rạp</p>
         </div>
         <button onClick={() => { setEditing(null); setShowForm(true); }}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-500/20">
@@ -117,6 +127,8 @@ export default function AdminCinemas() {
           <p className="text-center py-10 text-muted-foreground text-sm">Không tìm thấy rạp</p>
         )}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
 
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm animate-fade" onClick={() => { setShowForm(false); setEditing(null); }}>

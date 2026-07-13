@@ -2,11 +2,15 @@ import { useState, useEffect, useCallback } from "react";
 import { Search, Plus, Pencil, Trash2, X, Database, RefreshCw, Star } from "lucide-react";
 import { formatCurrency, handleImgError } from "../../lib/utils";
 import { api } from "../../lib/api";
+import Pagination from "../../components/Pagination";
 
 export default function AdminMovies() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [editingMovie, setEditingMovie] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
@@ -14,14 +18,20 @@ export default function AdminMovies() {
   const fetchMovies = useCallback(async () => {
     try {
       setLoading(true);
-      const params = search ? `?search=${search}&limit=50` : '?limit=50';
+      const params = search ? `?search=${search}&page=${page}&limit=10` : `?page=${page}&limit=10`;
       const res = await api.get(`/movies${params}`);
       setMovies(res.data);
+      setTotalPages(res.pagination.totalPages);
+      setTotal(res.pagination.total);
     } catch (err) {
       setError(err.data?.message || "Lỗi tải dữ liệu");
     } finally {
       setLoading(false);
     }
+  }, [search, page]);
+
+  useEffect(() => {
+    setPage(1);
   }, [search]);
 
   useEffect(() => {
@@ -104,7 +114,7 @@ export default function AdminMovies() {
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">Quản lý phim</h1>
-          <p className="text-muted-foreground text-sm mt-1">{movies.length} phim</p>
+          <p className="text-muted-foreground text-sm mt-1">{total} phim</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -163,7 +173,7 @@ export default function AdminMovies() {
             <tbody>
               {loading ? (
                 <tr><td colSpan={5} className="p-10 text-center text-muted-foreground">Đang tải...</td></tr>
-              ) : movies.filter(m => m.title.toLowerCase().includes(search.toLowerCase())).map((movie) => (
+              ) : movies.map((movie) => (
                 <tr key={movie.id} className="border-b border-border/50 hover:bg-muted/50 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
@@ -217,6 +227,8 @@ export default function AdminMovies() {
           <p className="text-center py-10 text-muted-foreground text-sm">Không tìm thấy phim</p>
         )}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
 
       {showForm && (
         <MovieFormModal

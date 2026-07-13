@@ -51,35 +51,44 @@ const SeatModel = {
   },
 
   async initLayout(showtimeId) {
-    const rowLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-    const vipRowSet = new Set(['E', 'F']);
-    const seatsPerRow = 12;
+    const [templates] = await pool.query(
+      `SELECT ss.row_label, ss.seat_number, ss.seat_type
+       FROM showtimes st
+       JOIN screen_seats ss ON ss.screen_id = st.screen_id
+       WHERE st.id = ?
+       ORDER BY ss.row_label, ss.seat_number`,
+      [showtimeId]
+    ).catch(err => {
+      // Older databases may not have imported room layouts yet.
+      if (err.code === 'ER_NO_SUCH_TABLE') return [[]];
+      throw err;
+    });
 
-    const values = [];
-    for (const row of rowLabels) {
-      for (let num = 1; num <= seatsPerRow; num++) {
-        values.push([showtimeId, row, num, vipRowSet.has(row) ? 1 : 0, 0, null]);
-      }
-    }
+    const fallbackRows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    const fallbackVipRows = new Set(['E', 'F']);
+    const layout = templates.length > 0
+      ? templates
+      : fallbackRows.flatMap(row => Array.from({ length: 12 }, (_, index) => ({
+          row_label: row,
+          seat_number: index + 1,
+          seat_type: fallbackVipRows.has(row) ? 'VIP' : 'STANDARD',
+        })));
+
+    const values = layout.map(seat => [
+      showtimeId,
+      seat.row_label,
+      seat.seat_number,
+      seat.seat_type === 'VIP' ? 1 : 0,
+      0,
+      null,
+    ]);
 
     await pool.query(
       'INSERT INTO seats (showtime_id, row_label, seat_number, is_vip, is_booked, booking_id) VALUES ?',
       [values]
     );
 
-    return {
-      rows: rowLabels,
-      seatsPerRow,
-      vipRows: ['E', 'F'],
-      bookedSeats: [],
-      seats: values.map(v => ({
-        row: v[1],
-        number: v[2],
-        isVip: !!v[3],
-        isBooked: false,
-        bookingId: null,
-      })),
-    };
+    return this.getLayout(showtimeId);
   },
 
   async bookSeats(showtimeId, seatIds, bookingId) {

@@ -1,0 +1,3252 @@
+{
+  "path": "C:\\Users\\chung\\OneDrive\\Desktop\\AI-book-movie-tickets\\outputs\\completed\\Example-Report-Completed-CineX.docx",
+  "sha256": "7a9cc42de4a387edd3d4aecbb98551b35ed83115b37d310936e2f9bd350fc510",
+  "paragraphs": [
+    {
+      "part": "document",
+      "index": 0,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 1,
+      "style": "normal",
+      "text": "HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 2,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 3,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 4,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 5,
+      "style": "normal",
+      "text": "BÁO CÁO BÀI TẬP LỚN",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 6,
+      "style": "normal",
+      "text": "TÊN ĐỀ TÀI: ",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 7,
+      "style": "normal",
+      "text": "Xây dựng hệ thống đặt vé xem phim trực tuyến tích hợp trợ lý CineX AI",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 8,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 9,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 10,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 11,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 12,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 13,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 14,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 15,
+      "style": "normal",
+      "text": "Hà Nội – 2026",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 16,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 17,
+      "style": "normal",
+      "text": "HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 18,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 19,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 20,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 21,
+      "style": "normal",
+      "text": "BÁO CÁO BÀI TẬP LỚN",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 22,
+      "style": "normal",
+      "text": "TÊN ĐỀ TÀI: ",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 23,
+      "style": "normal",
+      "text": "Xây dựng hệ thống đặt vé xem phim trực tuyến tích hợp trợ lý CineX AI",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 24,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 25,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 26,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 27,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 28,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 29,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 30,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 31,
+      "style": "normal",
+      "text": "Hà Nội – 2026",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 32,
+      "style": "Heading 1",
+      "text": "NHẬN XÉT CỦA GIẢNG VIÊN HƯỚNG DẪN",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 33,
+      "style": "normal",
+      "text": "Nhận xét:",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 34,
+      "style": "normal",
+      "text": "\t",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 35,
+      "style": "normal",
+      "text": "\t",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 36,
+      "style": "normal",
+      "text": "\t",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 37,
+      "style": "normal",
+      "text": "\t",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 38,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 39,
+      "style": "normal",
+      "text": "Xác nhận của giảng viên hướng dẫn",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 40,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 41,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 42,
+      "style": "Heading 1",
+      "text": "LỜI CẢM ƠN",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 43,
+      "style": "normal",
+      "text": "Em xin chân thành cảm ơn Học viện Công nghệ Bưu chính Viễn thông và Khoa Công nghệ Thông tin đã tạo điều kiện để em thực hiện đề tài có tính ứng dụng thực tế về hệ thống đặt vé xem phim trực tuyến.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 44,
+      "style": "normal",
+      "text": "Quá trình thực hiện giúp em vận dụng kiến thức phân tích yêu cầu, thiết kế cơ sở dữ liệu, phát triển giao diện React, xây dựng API Express, bảo mật JWT và tích hợp dịch vụ thanh toán PayOS.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 45,
+      "style": "normal",
+      "text": "Em trân trọng cảm ơn giảng viên hướng dẫn đã góp ý về phạm vi, nghiệp vụ và phương pháp kiểm thử. Những định hướng đó giúp sản phẩm được hoàn thiện theo hướng có thể vận hành và mở rộng.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 46,
+      "style": "normal",
+      "text": "Do giới hạn thời gian và môi trường đồ án, báo cáo khó tránh khỏi thiếu sót. Em mong nhận được góp ý để tiếp tục nâng cao chất lượng sản phẩm.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 47,
+      "style": "normal",
+      "text": "Em xin chân thành cảm ơn!",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 48,
+      "style": "normal",
+      "text": "Đại diện nhóm sinh viên thực hiện",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 49,
+      "style": "normal",
+      "text": "Nhóm trưởng",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 50,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 51,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 52,
+      "style": "Heading 1",
+      "text": "LỜI CAM ĐOAN",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 53,
+      "style": "normal",
+      "text": "Em cam đoan đề tài “Xây dựng hệ thống đặt vé xem phim trực tuyến tích hợp trợ lý CineX AI” là kết quả nghiên cứu và triển khai của cá nhân, dựa trên mã nguồn và tài liệu được nêu rõ trong báo cáo.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 54,
+      "style": "normal",
+      "text": "Các kết quả, mô tả và kiểm thử được trình bày trung thực; tài liệu tham khảo được ghi nguồn và không sử dụng dữ liệu nhạy cảm của người dùng thật.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 55,
+      "style": "normal",
+      "text": "Em chịu trách nhiệm về nội dung báo cáo và sẵn sàng hiệu chỉnh khi nhận được góp ý chuyên môn.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 56,
+      "style": "normal",
+      "text": "Nhóm sinh viên thực hiện",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 57,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 58,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 59,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 60,
+      "style": "Heading 1",
+      "text": "MỤC LỤC",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 61,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": true,
+      "page_break_before": false
+    },
+    {
+      "part": "document",
+      "index": 62,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 63,
+      "style": "Heading 1",
+      "text": "DANH MỤC BẢNG, HÌNH VẼ",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 64,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": false,
+      "page_break_before": false
+    },
+    {
+      "part": "document",
+      "index": 65,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": false,
+      "page_break_before": false
+    },
+    {
+      "part": "document",
+      "index": 66,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": false,
+      "page_break_before": false
+    },
+    {
+      "part": "document",
+      "index": 67,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": false,
+      "page_break_before": false
+    },
+    {
+      "part": "document",
+      "index": 68,
+      "style": "normal",
+      "text": "",
+      "alignment": "LEFT (0)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 69,
+      "style": "Heading 1",
+      "text": "LỜI MỞ ĐẦU",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 70,
+      "style": "normal",
+      "text": "Chuyển đổi số trong lĩnh vực giải trí làm thay đổi cách khách hàng tìm phim, chọn rạp và thanh toán. Một hệ thống đặt vé hiệu quả phải xử lý đồng thời trải nghiệm người dùng, tính nhất quán ghế, thời hạn thanh toán và khả năng vận hành của rạp.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 71,
+      "style": "normal",
+      "text": "Đề tài CineX xây dựng ứng dụng web full-stack cho phép tra cứu phim và suất chiếu, chọn ghế, giữ ghế, mua bắp nước, thanh toán qua PayOS và nhận vé QR. Trợ lý CineX AI hỗ trợ hội thoại từng bước, nhưng mọi thao tác nghiệp vụ quan trọng vẫn được xác thực ở backend.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 72,
+      "style": "normal",
+      "text": "Báo cáo gồm ba chương: tổng quan và công nghệ; phân tích, thiết kế hệ thống; triển khai, kiểm thử và đánh giá. Nội dung được đối chiếu với mã nguồn tại thời điểm 13/07/2026.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 73,
+      "style": "Heading 1",
+      "text": "CHƯƠNG 1: TỔNG QUAN VỀ HỆ THỐNG CINE X",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 74,
+      "style": "Heading 2",
+      "text": "1.1. Bối cảnh và bài toán",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 75,
+      "style": "normal",
+      "text": "Quy trình mua vé truyền thống yêu cầu khách đến quầy, chờ nhân viên kiểm tra lịch và ghế. Các website đặt vé đơn giản lại dễ phát sinh xung đột khi nhiều người chọn cùng một ghế, trạng thái thanh toán cập nhật chậm hoặc giá bị tin trực tiếp từ trình duyệt.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 76,
+      "style": "normal",
+      "text": "CineX giải quyết bài toán bằng cơ chế giữ ghế có thời hạn, transaction cơ sở dữ liệu, bảng booking-seat, thanh toán PayOS có webhook xác minh và vé điện tử. Hệ thống đồng thời cung cấp khu vực quản trị cho phim, rạp, suất chiếu, người dùng, khuyến mãi và bắp nước.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 77,
+      "style": "Heading 2",
+      "text": "1.2. Mục tiêu",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 78,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 79,
+      "style": "normal",
+      "text": "• Hoàn thiện luồng từ xem phim đến nhận vé QR trên một giao diện responsive.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 80,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 81,
+      "style": "normal",
+      "text": "• Ngăn đặt trùng ghế và tự giải phóng tài nguyên khi hết thời gian giữ/thanh toán.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 82,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 83,
+      "style": "normal",
+      "text": "• Không tin giá do client gửi; tính lại vé, bắp nước và phí dịch vụ ở server.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 84,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 85,
+      "style": "normal",
+      "text": "• Tách quyền user, staff và admin; hỗ trợ đăng nhập email/password và Firebase social login.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 86,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 87,
+      "style": "normal",
+      "text": "• Cung cấp trợ lý hội thoại CineX AI và luồng giao diện thường làm phương án dự phòng.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 88,
+      "style": "Heading 2",
+      "text": "1.3. Phạm vi và giới hạn",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 89,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 90,
+      "style": "Heading 2",
+      "text": "1.4. Công nghệ sử dụng",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 91,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 92,
+      "style": "Heading 2",
+      "text": "1.5. Kế hoạch thực hiện",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 93,
+      "style": "normal",
+      "text": "Dự án được chia thành các nhóm công việc: khảo sát/SRS; kiến trúc và dữ liệu; frontend/backend; booking và PayOS; trợ lý hội thoại; quản trị; kiểm thử, tài liệu và UAT. Kế hoạch chi tiết được quản lý trong Template-Technical và Calendar đi kèm.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 94,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 95,
+      "style": "Heading 1",
+      "text": "CHƯƠNG 2: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 96,
+      "style": "Heading 2",
+      "text": "2.1. Tác nhân và yêu cầu chức năng",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 97,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 98,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 99,
+      "style": "normal",
+      "text": "Hình 2.1 – Sơ đồ use case tổng quát của hệ thống",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 100,
+      "style": "Heading 2",
+      "text": "2.2. Kiến trúc tổng thể",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 101,
+      "style": "normal",
+      "text": "Kiến trúc ba lớp gồm SPA React, Express REST API và MySQL. Frontend gọi API qua lớp api.js; backend định tuyến theo miền nghiệp vụ, áp dụng authenticate/authorize trước controller, sau đó service/model thực hiện transaction và truy vấn tham số hóa.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 102,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 103,
+      "style": "normal",
+      "text": "• Public API: phim, rạp, suất chiếu, khuyến mãi và chat tùy chọn xác thực.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 104,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 105,
+      "style": "normal",
+      "text": "• Protected API: hồ sơ, giữ ghế, booking, payment, lịch sử và hội thoại.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 106,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 107,
+      "style": "normal",
+      "text": "• Privileged API: quản trị, ticket verify/use và cấu hình hệ thống.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 108,
+      "style": "Heading 2",
+      "text": "2.3. Thiết kế dữ liệu",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 109,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 110,
+      "style": "normal",
+      "text": "Hình 2.2 – Sơ đồ quan hệ dữ liệu nghiệp vụ cốt lõi",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 111,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 112,
+      "style": "Heading 2",
+      "text": "2.4. Luồng giữ ghế và đặt vé",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 113,
+      "style": "normal",
+      "text": "Khi người dùng chọn ghế, backend kiểm tra ghế tồn tại, không is_booked, không bị hold ACTIVE của người khác và không xuất hiện trong booking còn hiệu lực. Seat hold có mã riêng và thời hạn; booking được tạo từ hold trong transaction với trạng thái PENDING_PAYMENT.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 114,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 115,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 116,
+      "style": "normal",
+      "text": "Hình 2.3 – Sơ đồ chuyển trạng thái booking",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 117,
+      "style": "Heading 2",
+      "text": "2.5. Luồng thanh toán PayOS",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 118,
+      "style": "normal",
+      "text": "PaymentService tạo order code, checkout URL và QR từ bill đã được server tính. WebhookService xác minh chữ ký PayOS, kiểm tra order code, amount, giao dịch trùng và trạng thái hiện tại trước khi gọi transaction xác nhận thanh toán.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 119,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 120,
+      "style": "normal",
+      "text": "• Webhook không hợp lệ được ghi log INVALID_SIGNATURE/FAILED.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 121,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 122,
+      "style": "normal",
+      "text": "• Webhook hợp lệ nhưng lặp lại được đánh dấu DUPLICATE và không phát hành vé lần hai.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 123,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 124,
+      "style": "normal",
+      "text": "• Khi thành công, payment/bill = PAID, booking = CONFIRMED, booking_seats = BOOKED và ticket được tạo.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 125,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 126,
+      "style": "normal",
+      "text": "• Frontend nhận cập nhật qua polling hoặc SSE và hiển thị trang thành công/hủy.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 127,
+      "style": "Heading 2",
+      "text": "2.6. CineX AI",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 128,
+      "style": "normal",
+      "text": "Trợ lý hiện tại triển khai hội thoại trạng thái thay vì phụ thuộc hoàn toàn vào LLM. Conversation lưu bước chọn phim, khu vực, rạp, ngày, suất, ghế và thanh toán. Các handler truy vấn dữ liệu thật, chuẩn hóa phản hồi và đưa ra suggestedActions.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 129,
+      "style": "normal",
+      "text": "",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 130,
+      "style": "normal",
+      "text": "Hình 2.4 – Luồng đặt vé qua CineX AI",
+      "alignment": "CENTER (1)",
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 131,
+      "style": "Heading 2",
+      "text": "2.7. Bảo mật và toàn vẹn",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 132,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 133,
+      "style": "normal",
+      "text": "• Mật khẩu băm bằng bcrypt; đăng nhập có JWT access 15 phút và refresh 7 ngày.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 134,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 135,
+      "style": "normal",
+      "text": "• Refresh token lưu hash, quay vòng khi sử dụng; access token có JTI và blacklist khi đăng xuất.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 136,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 137,
+      "style": "normal",
+      "text": "• RBAC được áp dụng tại route; dữ liệu booking/bill kiểm tra quyền sở hữu.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 138,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 139,
+      "style": "normal",
+      "text": "• SQL dùng tham số; transaction và khóa FOR UPDATE cho các đoạn cạnh tranh.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 140,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 141,
+      "style": "normal",
+      "text": "• Giá bắp nước và tổng tiền lấy từ database/cấu hình server, không lấy từ payload client.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 142,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 143,
+      "style": "Heading 1",
+      "text": "CHƯƠNG 3: CÀI ĐẶT VÀ KIỂM THỬ HỆ THỐNG",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 144,
+      "style": "Heading 2",
+      "text": "3.1. Cấu trúc triển khai",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 145,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 146,
+      "style": "Heading 2",
+      "text": "3.2. Giao diện người dùng và quản trị",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 147,
+      "style": "normal",
+      "text": "Giao diện người dùng có Home, Movies, MovieDetail, Showtimes, SeatSelection, Checkout, Profile, Promotions và các trang kết quả PayOS. Khu vực admin tách layout và các trang Movies, Showtimes, Bookings, Promotions, Cinemas, Users và Concessions.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 148,
+      "style": "normal",
+      "text": "Các danh sách lớn dùng phân trang; checkout hiển thị ghế, bắp nước, phí, tổng tiền, QR và nút mở PayOS. Trạng thái lỗi/hết hạn được phản hồi rõ ràng, đồng thời giải phóng hold khi người dùng rời luồng phù hợp.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 149,
+      "style": "Heading 2",
+      "text": "3.3. Backend và API",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 150,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 151,
+      "style": "Heading 2",
+      "text": "3.4. Kiểm thử",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 152,
+      "style": "normal",
+      "text": "Tại thời điểm cập nhật, bộ kiểm thử tự động tập trung vào ranh giới tin cậy của tổng tiền. Kết quả chạy ngày 13/07/2026: 3 bài kiểm thử, 3 đạt, 0 lỗi.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 153,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 154,
+      "style": "normal",
+      "text": "Các kịch bản cần bổ sung gồm cạnh tranh giữ cùng ghế, timeout booking, webhook trùng/sai chữ ký/sai số tiền, rotation refresh token, phân quyền admin và kiểm thử end-to-end với PayOS sandbox.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 155,
+      "style": "Heading 2",
+      "text": "3.5. Đánh giá kết quả",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 156,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 157,
+      "style": "normal",
+      "text": "• Luồng cốt lõi từ phim đến vé QR đã có đủ thành phần frontend, backend và dữ liệu.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 158,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 159,
+      "style": "normal",
+      "text": "• Cơ chế transaction, giữ ghế và webhook giúp giảm rủi ro sai lệch trạng thái.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 160,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 161,
+      "style": "normal",
+      "text": "• Hệ thống vẫn phụ thuộc cấu hình ngoài; cần CI, logging tập trung và test tích hợp trước production.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 162,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 163,
+      "style": "normal",
+      "text": "• Màn hình check-in và giám sát CineX AI có backend nền tảng nhưng còn cần hoàn thiện trải nghiệm vận hành.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 164,
+      "style": "Heading 1",
+      "text": "KẾT LUẬN",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 165,
+      "style": "normal",
+      "text": "Đề tài đã xây dựng được hệ thống CineX theo kiến trúc full-stack, bao phủ tra cứu phim, suất chiếu, giữ ghế, booking, PayOS, vé QR, bắp nước, quản trị và trợ lý hội thoại. Điểm quan trọng của giải pháp là đặt toàn bộ quyết định giá và trạng thái giao dịch ở backend.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 166,
+      "style": "normal",
+      "text": "Hướng phát triển tiếp theo là tăng độ phủ kiểm thử, hoàn thiện check-in trên thiết bị di động, báo cáo doanh thu nâng cao, giám sát hội thoại, hoàn tiền có kiểm soát và triển khai production với quan sát hệ thống đầy đủ.",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 167,
+      "style": "Heading 1",
+      "text": "TÀI LIỆU THAM KHẢO",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 168,
+      "style": "normal",
+      "text": "React Documentation — https://react.dev/",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 169,
+      "style": "normal",
+      "text": "Vite Documentation — https://vite.dev/",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 170,
+      "style": "normal",
+      "text": "Express Documentation — https://expressjs.com/",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 171,
+      "style": "normal",
+      "text": "MySQL 8.0 Reference Manual — https://dev.mysql.com/doc/",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 172,
+      "style": "normal",
+      "text": "Firebase Authentication — https://firebase.google.com/docs/auth",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 173,
+      "style": "normal",
+      "text": "PayOS Documentation — https://payos.vn/docs/",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 174,
+      "style": "normal",
+      "text": "TMDB API Documentation — https://developer.themoviedb.org/docs",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "document",
+      "index": 175,
+      "style": "normal",
+      "text": "Google Places API — https://developers.google.com/maps/documentation/places/web-service",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    }
+  ],
+  "tables": [
+    {
+      "index": 0,
+      "rows": [
+        [
+          {
+            "cell": "r0c0",
+            "text": "   Giảng viên hướng dẫn",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c1",
+            "text": ": ........................................",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r1c0",
+            "text": "   Đơn vị công tác của giảng viên",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c1",
+            "text": ": Học viện Công nghệ Bưu chính Viễn thông",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r2c0",
+            "text": "   Chương trình đào tạo",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c1",
+            "text": ": Công nghệ thông tin",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r3c0",
+            "text": "   Lớp",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c1",
+            "text": ": D24TX",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r4c0",
+            "text": "       Sinh viên thực hiện",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r4c1",
+            "text": ": Hoàng Văn Chung   Mã sinh viên",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r5c0",
+            "text": ": Chưa cung cấp",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r5c1",
+            "text": "    ",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r6c0",
+            "text": "        ",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r6c1",
+            "text": "  ",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r7c0",
+            "text": "        ",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r7c1",
+            "text": "    ",
+            "styles": [
+              "normal"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "index": 1,
+      "rows": [
+        [
+          {
+            "cell": "r0c0",
+            "text": "   Giảng viên hướng dẫn",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c1",
+            "text": ": ........................................",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r1c0",
+            "text": "   Đơn vị công tác của giảng viên",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c1",
+            "text": ": Học viện Công nghệ Bưu chính Viễn thông",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r2c0",
+            "text": "   Chương trình đào tạo",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c1",
+            "text": ": Công nghệ thông tin",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r3c0",
+            "text": "   Lớp",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c1",
+            "text": ": D24TX",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r4c0",
+            "text": "       Sinh viên thực hiện",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r4c1",
+            "text": ": Hoàng Văn Chung   Mã sinh viên",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r5c0",
+            "text": ": Chưa cung cấp",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r5c1",
+            "text": "    ",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r6c0",
+            "text": "        ",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r6c1",
+            "text": "",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r7c0",
+            "text": "        ",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r7c1",
+            "text": "   ",
+            "styles": [
+              "normal"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "index": 2,
+      "rows": [
+        [
+          {
+            "cell": "r0c0",
+            "text": "Trong phạm vi",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c1",
+            "text": "Ngoài phạm vi/điều kiện",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r1c0",
+            "text": "Phim, rạp, suất, ghế, booking, PayOS, QR, khuyến mãi, bắp nước, admin, CineX AI",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c1",
+            "text": "Hạ tầng rạp vật lý, kế toán/CRM, hoàn tiền tự động sau khi vé đã xác nhận",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r2c0",
+            "text": "MySQL local và migrations",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c1",
+            "text": "Triển khai production đa vùng, SLA thương mại",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r3c0",
+            "text": "TMDB/Google Places/Firebase có tích hợp",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c1",
+            "text": "Phụ thuộc DNS, billing và khóa API hợp lệ",
+            "styles": [
+              "normal"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "index": 3,
+      "rows": [
+        [
+          {
+            "cell": "r0c0",
+            "text": "Lớp",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c1",
+            "text": "Công nghệ",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c2",
+            "text": "Vai trò",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r1c0",
+            "text": "Frontend",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c1",
+            "text": "React 19, Vite 8, Tailwind CSS",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c2",
+            "text": "SPA, routing, responsive UI, trang user/admin",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r2c0",
+            "text": "Backend",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c1",
+            "text": "Node.js, Express 5",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c2",
+            "text": "REST API, middleware, nghiệp vụ booking/payment",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r3c0",
+            "text": "Dữ liệu",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c1",
+            "text": "MySQL, Firebase Auth",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c2",
+            "text": "Dữ liệu nghiệp vụ và xác thực social",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r4c0",
+            "text": "Thanh toán",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r4c1",
+            "text": "PayOS",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r4c2",
+            "text": "Checkout URL, QR, webhook và tra cứu trạng thái",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r5c0",
+            "text": "Tích hợp",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r5c1",
+            "text": "TMDB, Google Places",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r5c2",
+            "text": "Làm giàu dữ liệu phim và tìm rạp; có fallback",
+            "styles": [
+              "normal"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "index": 4,
+      "rows": [
+        [
+          {
+            "cell": "r0c0",
+            "text": "Tác nhân",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c1",
+            "text": "Chức năng chính",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r1c0",
+            "text": "Khách/User",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c1",
+            "text": "Xem phim, lọc lịch chiếu, chọn/giữ ghế, bắp nước, PayOS, lịch sử vé, CineX AI",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r2c0",
+            "text": "Staff",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c1",
+            "text": "Hỗ trợ booking, xác minh/sử dụng ticket, vận hành suất chiếu theo quyền",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r3c0",
+            "text": "Admin",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c1",
+            "text": "CRUD phim, rạp, suất, khuyến mãi, người dùng, bắp nước; dashboard và cấu hình lịch",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r4c0",
+            "text": "PayOS",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r4c1",
+            "text": "Tạo phiên thanh toán và gửi webhook đã ký",
+            "styles": [
+              "normal"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "index": 5,
+      "rows": [
+        [
+          {
+            "cell": "r0c0",
+            "text": "Nhóm bảng",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c1",
+            "text": "Bảng tiêu biểu",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c2",
+            "text": "Mục đích",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r1c0",
+            "text": "Danh mục",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c1",
+            "text": "movies, cinemas, screens, showtimes, seats",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c2",
+            "text": "Dữ liệu phim và lịch chiếu",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r2c0",
+            "text": "Giao dịch",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c1",
+            "text": "seat_holds, seat_hold_seats, bookings, booking_seats",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c2",
+            "text": "Khóa ghế, đơn hàng và giá tại thời điểm đặt",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r3c0",
+            "text": "Thanh toán",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c1",
+            "text": "bills, payments, payment_webhook_logs",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c2",
+            "text": "Theo dõi vòng đời và chống xử lý lặp",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r4c0",
+            "text": "Vé",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r4c1",
+            "text": "tickets",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r4c2",
+            "text": "Mã vé, QR, trạng thái sử dụng",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r5c0",
+            "text": "Bảo mật",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r5c1",
+            "text": "refresh_tokens, token_blacklist",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r5c2",
+            "text": "Rotation và thu hồi JWT",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r6c0",
+            "text": "Mở rộng",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r6c1",
+            "text": "concessions, promotions, app_settings, conversations",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r6c2",
+            "text": "Bắp nước, ưu đãi, cấu hình và hội thoại",
+            "styles": [
+              "normal"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "index": 6,
+      "rows": [
+        [
+          {
+            "cell": "r0c0",
+            "text": "Trạng thái",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c1",
+            "text": "Ý nghĩa",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c2",
+            "text": "Chuyển tiếp",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r1c0",
+            "text": "ACTIVE",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c1",
+            "text": "Ghế đang được giữ",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c2",
+            "text": "CONVERTED, EXPIRED, RELEASED",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r2c0",
+            "text": "PENDING_PAYMENT",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c1",
+            "text": "Booking/bill chờ thanh toán",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c2",
+            "text": "CONFIRMED, CANCELLED, EXPIRED",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r3c0",
+            "text": "CONFIRMED",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c1",
+            "text": "Webhook hợp lệ, đã phát hành vé",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c2",
+            "text": "Ticket USED khi check-in",
+            "styles": [
+              "normal"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "index": 7,
+      "rows": [
+        [
+          {
+            "cell": "r0c0",
+            "text": "Thư mục",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c1",
+            "text": "Nội dung",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r1c0",
+            "text": "src/pages, src/components",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c1",
+            "text": "Trang người dùng, checkout, profile, thanh toán và khu vực admin",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r2c0",
+            "text": "src/lib",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c1",
+            "text": "API client, Firebase và context dùng chung",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r3c0",
+            "text": "server/routes/controllers",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c1",
+            "text": "REST endpoints và điều phối request/response",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r4c0",
+            "text": "server/services/models",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r4c1",
+            "text": "Nghiệp vụ, transaction, webhook, scheduler và truy cập dữ liệu",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r5c0",
+            "text": "server/database",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r5c1",
+            "text": "Schema, seed và migrations",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r6c0",
+            "text": "tests",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r6c1",
+            "text": "Kiểm thử tự động bằng Node test runner",
+            "styles": [
+              "normal"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "index": 8,
+      "rows": [
+        [
+          {
+            "cell": "r0c0",
+            "text": "Nhóm API",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c1",
+            "text": "Endpoint tiêu biểu",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c2",
+            "text": "Bảo vệ",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r1c0",
+            "text": "Booking v1",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c1",
+            "text": "POST /api/v1/seat-holds; POST /api/v1/bookings",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c2",
+            "text": "JWT user",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r2c0",
+            "text": "Payment v1",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c1",
+            "text": "POST /api/v1/payments/payos; GET status/stream",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c2",
+            "text": "JWT user",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r3c0",
+            "text": "Webhook",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c1",
+            "text": "POST /api/v1/webhooks/payos",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c2",
+            "text": "Chữ ký PayOS",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r4c0",
+            "text": "Ticket",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r4c1",
+            "text": "POST /api/tickets/verify; /:code/use",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r4c2",
+            "text": "admin/staff",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r5c0",
+            "text": "Admin",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r5c1",
+            "text": "/api/admin, /api/users, /api/roles",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r5c2",
+            "text": "admin",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r6c0",
+            "text": "Chat",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r6c1",
+            "text": "POST /api/ai/chat",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r6c2",
+            "text": "optional auth",
+            "styles": [
+              "normal"
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "index": 9,
+      "rows": [
+        [
+          {
+            "cell": "r0c0",
+            "text": "Mã",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c1",
+            "text": "Kịch bản",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r0c2",
+            "text": "Kết quả",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r1c0",
+            "text": "T01",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c1",
+            "text": "Bắp rang 45.000đ cộng vào bill và phí dịch vụ đúng",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r1c2",
+            "text": "Đạt",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r2c0",
+            "text": "T02",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c1",
+            "text": "Client gửi price=1 nhưng server vẫn dùng giá cấu hình",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r2c2",
+            "text": "Đạt",
+            "styles": [
+              "normal"
+            ]
+          }
+        ],
+        [
+          {
+            "cell": "r3c0",
+            "text": "T03",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c1",
+            "text": "Loại sản phẩm lạ bị loại; số lượng được giới hạn",
+            "styles": [
+              "normal"
+            ]
+          },
+          {
+            "cell": "r3c2",
+            "text": "Đạt",
+            "styles": [
+              "normal"
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "headers": [
+    {
+      "part": "header-0",
+      "index": 0,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "header-1",
+      "index": 0,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "header-2",
+      "index": 0,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    }
+  ],
+  "footers": [
+    {
+      "part": "footer-0",
+      "index": 0,
+      "style": "normal",
+      "text": "",
+      "alignment": null,
+      "keep_with_next": null,
+      "page_break_before": null
+    },
+    {
+      "part": "footer-1",
+      "index": 0,
+      "style": "normal",
+      "text": "",
+      "alignment": "JUSTIFY (3)",
+      "keep_with_next": false,
+      "page_break_before": false
+    },
+    {
+      "part": "footer-2",
+      "index": 0,
+      "style": "normal",
+      "text": "",
+      "alignment": "JUSTIFY (3)",
+      "keep_with_next": false,
+      "page_break_before": false
+    }
+  ],
+  "sections": [
+    {
+      "index": 0,
+      "width": 7560945,
+      "height": 10693400,
+      "orientation": "PORTRAIT (0)",
+      "top_margin": 723900,
+      "bottom_margin": 723900,
+      "left_margin": 1080135,
+      "right_margin": 720090,
+      "header_distance": 457200,
+      "footer_distance": 457200,
+      "start_type": "NEW_PAGE (2)"
+    },
+    {
+      "index": 1,
+      "width": 7560945,
+      "height": 10693400,
+      "orientation": "PORTRAIT (0)",
+      "top_margin": 723900,
+      "bottom_margin": 723900,
+      "left_margin": 1080135,
+      "right_margin": 720090,
+      "header_distance": 457200,
+      "footer_distance": 457200,
+      "start_type": "NEW_PAGE (2)"
+    },
+    {
+      "index": 2,
+      "width": 7560945,
+      "height": 10693400,
+      "orientation": "PORTRAIT (0)",
+      "top_margin": 723900,
+      "bottom_margin": 723900,
+      "left_margin": 1080135,
+      "right_margin": 720090,
+      "header_distance": 457200,
+      "footer_distance": 457200,
+      "start_type": "NEW_PAGE (2)"
+    }
+  ],
+  "inline_shapes": 4,
+  "package": [
+    {
+      "name": "[Content_Types].xml",
+      "size": 2102,
+      "sha256": "dbb40f87eb84394006d120e52e2e3c957ac05e53ad30654bd85b5292a8b6b71b"
+    },
+    {
+      "name": "_rels/.rels",
+      "size": 443,
+      "sha256": "88d76211b102228f89f16af987143ea302d84c02be687d87eda92323efe3454b"
+    },
+    {
+      "name": "word/document.xml",
+      "size": 425690,
+      "sha256": "90a073276384612827e15d816c8a78bf0b2b41aca2c840dfb33ae20f975a9c53"
+    },
+    {
+      "name": "word/_rels/document.xml.rels",
+      "size": 7503,
+      "sha256": "b6ded1c5647ef7104e9bf0d4f874ecaf49f7ce4bce5fe49d2a6f0767fc6d20a7"
+    },
+    {
+      "name": "word/media/image12.png",
+      "size": 185274,
+      "sha256": "f7bc0c2fa68850f9aeedec164af8e9f245c1de5fac7a6fca682c6760ea60bc1c"
+    },
+    {
+      "name": "word/media/image4.png",
+      "size": 61736,
+      "sha256": "b5568f9f5a712b9c7893f963b480e2677a447e89762d547f14e3396da68877af"
+    },
+    {
+      "name": "word/media/image5.png",
+      "size": 117574,
+      "sha256": "4c74d0559e1db65bc85b745364870b13750972168b38c6f07c92f2a28eb3144e"
+    },
+    {
+      "name": "word/media/image11.png",
+      "size": 210918,
+      "sha256": "4f40e553741a4849bbc4492ca49da1897ac2c18f1f53c4b68ad6b731b4826adc"
+    },
+    {
+      "name": "word/media/image9.png",
+      "size": 163325,
+      "sha256": "fa7ed27233b39422ea85660bb703e09d8513c20c936094170f1613acb0ae9c3f"
+    },
+    {
+      "name": "word/media/image18.png",
+      "size": 137543,
+      "sha256": "2dfd464ee2cdaec7875f2cd5b79842354caeb7d3e63cebb7b463eebe045cee61"
+    },
+    {
+      "name": "word/media/image15.png",
+      "size": 210991,
+      "sha256": "b388d5d7f8bddeb4518ce1c8016260e2c211ecc52dbdc8090bcad8142c00e31c"
+    },
+    {
+      "name": "word/theme/theme1.xml",
+      "size": 7643,
+      "sha256": "b2295d3198893d2c03f5e584c749a15751b798aefdcd9bee2889f13903d68cb2"
+    },
+    {
+      "name": "word/settings.xml",
+      "size": 2182,
+      "sha256": "bff7f2ff7a15e87f224c6b0a1191ad3884da98eb79a3b698e671ad66c13ca426"
+    },
+    {
+      "name": "word/fontTable.xml",
+      "size": 2461,
+      "sha256": "bd69d09e321dd86b2e00902c9fdbcb06a431bfc532646d304d6af73c4e871a10"
+    },
+    {
+      "name": "word/_rels/fontTable.xml.rels",
+      "size": 1008,
+      "sha256": "35cad97957f85db0e39ba881146a49b413be584760537640e974d1d569af9818"
+    },
+    {
+      "name": "word/fonts/Cousine-regular.ttf",
+      "size": 288156,
+      "sha256": "5bf551795cdae6f1c6e0d07a27b2df68d10542cd588eaea0758134f4154ed1fb"
+    },
+    {
+      "name": "word/fonts/Cousine-bold.ttf",
+      "size": 289100,
+      "sha256": "8dfbca60ef5ae7e79789f6c040525b924c1fa95b80026112e17f0999caef343a"
+    },
+    {
+      "name": "word/fonts/Cousine-italic.ttf",
+      "size": 297280,
+      "sha256": "66e1e2f38c59c95e4302da1c045e5e1704861f4bf7f45078fde53ef2ea849302"
+    },
+    {
+      "name": "word/fonts/Cousine-boldItalic.ttf",
+      "size": 298760,
+      "sha256": "b7e513d54ae6a430f36ef5f1de6056f1bd089ee0b668cebb365899a445ecddf4"
+    },
+    {
+      "name": "word/fonts/NotoSansSymbols-regular.ttf",
+      "size": 183620,
+      "sha256": "3c9c40311ae6012f7d3c4a4ff98952b2c7bbc0d4c89a93ba22986ff1f1884af5"
+    },
+    {
+      "name": "word/fonts/NotoSansSymbols-bold.ttf",
+      "size": 183344,
+      "sha256": "afc2a6b7050df884f5deb2618ebbdecb9fa2f163d3ca66ca75f8b069febc6741"
+    },
+    {
+      "name": "word/numbering.xml",
+      "size": 42952,
+      "sha256": "65b5590a2fb180e874371f671ac9402f75f3e394fadd58ea4e304929877fbc44"
+    },
+    {
+      "name": "word/media/image30.png",
+      "size": 37231,
+      "sha256": "2fba8fa29e766848770dd43bc7e88c2032126683db9c551d1a47ad5f83772bed"
+    },
+    {
+      "name": "word/media/image3.png",
+      "size": 74635,
+      "sha256": "8594b8e462801cc2ea2fdd0df7f2dd17b3335ab0b2d54a12676ab690ead2132d"
+    },
+    {
+      "name": "word/media/image13.png",
+      "size": 65658,
+      "sha256": "82b8c14aa1aa76cf1b1f00546db8c16ffbcca8b7939baf35387a829598f40aa7"
+    },
+    {
+      "name": "word/media/image7.png",
+      "size": 82723,
+      "sha256": "5a24e2387fee159790600812c69fef8c913d8014d81e20d517a080ecdab515f8"
+    },
+    {
+      "name": "word/styles.xml",
+      "size": 29096,
+      "sha256": "4819004bbe75d2c040fc998734e7b6ece0a9f3c76ffa16e972482dde42b5d4f6"
+    },
+    {
+      "name": "customXML/item1.xml",
+      "size": 3773,
+      "sha256": "bbad75e2677fac282b779d7ed15318d9969e91e20e5f8b9ba2d65f76d4f6e924"
+    },
+    {
+      "name": "customXML/_rels/item1.xml.rels",
+      "size": 295,
+      "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+    },
+    {
+      "name": "customXML/itemProps1.xml",
+      "size": 404,
+      "sha256": "fc2e321bb5ca54d5f2b99b99f91d681d004417098918a318be88fe525218c9a3"
+    },
+    {
+      "name": "word/media/image34.jpg",
+      "size": 111122,
+      "sha256": "89e4e6e6ef04956b5251f9f81925efc7ea21e382462f62edf07edcd78b300aea"
+    },
+    {
+      "name": "word/footer1.xml",
+      "size": 2969,
+      "sha256": "4cfa660bddefee2ee703da700234e02f2c581927773dfc8a8cd10e601ebef499"
+    },
+    {
+      "name": "word/media/image10.png",
+      "size": 141534,
+      "sha256": "cbb94ceb3d2a5dccfcf66e13b6f37d1d84c6be22dec6529b8fc6242bd2aae5a1"
+    },
+    {
+      "name": "word/media/image21.png",
+      "size": 124292,
+      "sha256": "54b65a11b195c9630496693932d0984c1361f0ac95401a5931439c9ed2fec7a6"
+    },
+    {
+      "name": "word/media/image40.png",
+      "size": 40380,
+      "sha256": "b1aeae0b14a8fa5bed4bd14339e120a62674fcf261844d27c23be56b9fdff31f"
+    },
+    {
+      "name": "word/media/image26.png",
+      "size": 116829,
+      "sha256": "381de025b2110c8c8a1b43720ea310bcdc02b5f7990e2bbedd63fbf2cdaa1c75"
+    },
+    {
+      "name": "word/media/image23.png",
+      "size": 42253,
+      "sha256": "6acacbc4ac42eab0b27cdbf1de388c183616c1400f573f78c8a0a685295fa841"
+    },
+    {
+      "name": "word/media/image20.png",
+      "size": 38047,
+      "sha256": "e805829b3c62aaa2563655288c8542b09e555701e793e12bffcdd76b3dae84f0"
+    },
+    {
+      "name": "word/media/image25.png",
+      "size": 156041,
+      "sha256": "b51ae8f914a094c598b0b7a24d1f7239ab67117cf61900274fa24ba38faf14ff"
+    },
+    {
+      "name": "word/media/image35.png",
+      "size": 40975,
+      "sha256": "b499f9cc5ad494da660227e041d5cbb8fb09ac735d8feea9e2f0ef2df4e4d73d"
+    },
+    {
+      "name": "word/media/image8.png",
+      "size": 250483,
+      "sha256": "0177c53942d857e2e226a4592c6fa8a030a6ae8ce10d4a69b0feedb1a8885c92"
+    },
+    {
+      "name": "word/media/image24.png",
+      "size": 178414,
+      "sha256": "bcbb7609f30075263a5464d1c9f21093513850506d5d93b699eba17f1e2aa16e"
+    },
+    {
+      "name": "word/media/image19.png",
+      "size": 96630,
+      "sha256": "49432e96799b609efe14a2a8ad6d9f85134c5ca9e0c9c11db3ad7c339bd4376f"
+    },
+    {
+      "name": "word/media/image16.png",
+      "size": 147712,
+      "sha256": "48f3fd2a3967cedccf1855b545077eec3ab36f8e680b5489630bef16815ef59c"
+    },
+    {
+      "name": "word/media/image50.png",
+      "size": 70,
+      "sha256": "18d840af2c50eff9a5241d4b50833a596e6b71af0cee87cf2b3435345f2f7aba"
+    },
+    {
+      "name": "word/media/image17.png",
+      "size": 44254,
+      "sha256": "4d0be54ee1bf57fa134f97ff4fd6d57ecb66301fd5c7a9802cae5659509f9463"
+    },
+    {
+      "name": "word/media/image6.png",
+      "size": 77097,
+      "sha256": "d3b2a70a1340306b85a26c88850ec663a7c462fe19838fdb9d1d07150e815c6d"
+    },
+    {
+      "name": "word/media/image45.png",
+      "size": 20164,
+      "sha256": "52e07eecb361c35d1c6b1abc530da2cbf1ce4422390cf06d6f8e131458f374e3"
+    },
+    {
+      "name": "word/media/image38.png",
+      "size": 39515,
+      "sha256": "16c14152090b1a94242c8a4292f57534f6868d454da299418c8012cdbaea2664"
+    },
+    {
+      "name": "word/media/image42.png",
+      "size": 36908,
+      "sha256": "814dc5901b8f53e264fcc07cd8eb827e3f018ec86c4e086a970f68fee3be5ffd"
+    },
+    {
+      "name": "word/media/image41.png",
+      "size": 27545,
+      "sha256": "2feba05effb1468f0a7357c4c3c5f1a4c008f65f9da4c207d7c82668f0140ef5"
+    },
+    {
+      "name": "word/media/image22.png",
+      "size": 38983,
+      "sha256": "a8c7c1fecf51dba14e92e3c18755bea353eca01b904093c19775c7fc6e958370"
+    },
+    {
+      "name": "word/media/image1.png",
+      "size": 69282,
+      "sha256": "a047bfd71d24c5e85463c1cc4673f41cb43c27a1de05141c35aa2cd45686b5d5"
+    },
+    {
+      "name": "word/media/image14.png",
+      "size": 53802,
+      "sha256": "33c61a8f41d1b23a5a8a65f809bb765e18d36fa73307ef1853d6a2a4ac891b1f"
+    },
+    {
+      "name": "word/media/image27.png",
+      "size": 73313,
+      "sha256": "69c702563280fb1ac0742d299a38569b4a5bef55ee6b3dc3172a2ba9e68792e4"
+    },
+    {
+      "name": "word/media/image29.png",
+      "size": 118078,
+      "sha256": "444e9a368c3fc2e22bb4e641302df1d9ad8f2f6618c8ca64d26d78b2324fc71e"
+    },
+    {
+      "name": "word/media/image31.png",
+      "size": 85053,
+      "sha256": "ea47972d4097775f3fa66d78d3088934882e124885066c6a5899b3a9b3f42e73"
+    },
+    {
+      "name": "word/media/image28.png",
+      "size": 121603,
+      "sha256": "186a45a83cfb12c235f53540bca4730aa501cd0ffbcfd187cfa8a9b8ee310847"
+    },
+    {
+      "name": "word/media/image2.png",
+      "size": 58040,
+      "sha256": "c311ca0106854919912c59acafe51e8bcd312533b7ba4f1b7ea7e6ca9f0e221d"
+    },
+    {
+      "name": "word/media/image39.png",
+      "size": 278153,
+      "sha256": "b090f5354f49b70f866ae13b5bf21aabb2495023fcd2380d8f8c39c6dba3328c"
+    },
+    {
+      "name": "word/media/image37.png",
+      "size": 38912,
+      "sha256": "3e9fff0455eed7427393a68eeba6764d7f4147da6898a83fb3f06c590de7b048"
+    },
+    {
+      "name": "word/media/image33.png",
+      "size": 79665,
+      "sha256": "feb16f0539b2f576f0de0c030ffb98f54093736f3de5809e222f755a684191f4"
+    },
+    {
+      "name": "word/media/image43.png",
+      "size": 83023,
+      "sha256": "d875b2c4c5284f65457a9460002dd7d0f178d146d8454d2cf749c277741a6264"
+    },
+    {
+      "name": "word/media/image36.png",
+      "size": 63448,
+      "sha256": "2fa6dfb85946de50ce29e062a7a6b556c72ec3d8b85a6926f8c0fcb8abf290df"
+    },
+    {
+      "name": "word/media/image32.png",
+      "size": 468125,
+      "sha256": "8b4e06c05958b21ef85157938a92103f2bdf9434aea6c7a6a01a6a7b2c12bdd8"
+    },
+    {
+      "name": "word/media/image44.png",
+      "size": 247814,
+      "sha256": "9cfad5e59aa6fb02c25d99f4aff43aedf60de121c48283f48846970bbc281806"
+    },
+    {
+      "name": "word/media/image46.png",
+      "size": 91670,
+      "sha256": "2a8d77710ad2a526b1e133f4c007b636b43d5c3dc814f6cca25d74670e4683fb"
+    },
+    {
+      "name": "word/media/image47.png",
+      "size": 218210,
+      "sha256": "cc901e7184ebfcc92e784779c353c4a8c24d3178a2d394e98a6dbd5ad9ef271b"
+    },
+    {
+      "name": "docProps/core.xml",
+      "size": 602,
+      "sha256": "7a23af4b7a48bba50ca4632290a958b4ba31cd2dc2ac21bef1a9dcc2dd1ee7d7"
+    }
+  ],
+  "core_properties": {
+    "title": "Báo cáo bài tập lớn – AI Book Movie Tickets / CineX",
+    "subject": "",
+    "author": "Hoàng Văn Chung",
+    "keywords": "",
+    "comments": ""
+  }
+}

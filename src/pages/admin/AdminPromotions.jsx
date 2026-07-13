@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Search, Plus, Pencil, Trash2, X, Gift, GraduationCap, Crown, Ticket } from "lucide-react";
 import { formatDate } from "../../lib/utils";
 import { api } from "../../lib/api";
+import Pagination from "../../components/Pagination";
 
 const iconMap = { Gift, GraduationCap, Crown, Ticket };
 
@@ -9,18 +10,27 @@ export default function AdminPromotions() {
   const [promos, setPromos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [editing, setEditing] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
   const fetchPromos = useCallback(async () => {
     try {
       setLoading(true);
-      const params = search ? `?search=${search}` : '';
-      const res = await api.get(`/promotions?limit=50${params}`);
+      const params = search ? `?search=${search}&page=${page}&limit=10` : `?page=${page}&limit=10`;
+      const res = await api.get(`/promotions${params}`);
       setPromos(res.data);
+      setTotalPages(res.pagination.totalPages);
+      setTotal(res.pagination.total);
     } catch {} finally {
       setLoading(false);
     }
+  }, [search, page]);
+
+  useEffect(() => {
+    setPage(1);
   }, [search]);
 
   useEffect(() => { const t = setTimeout(fetchPromos, 300); return () => clearTimeout(t); }, [fetchPromos]);
@@ -55,7 +65,7 @@ export default function AdminPromotions() {
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">Quản lý khuyến mãi</h1>
-          <p className="text-muted-foreground text-sm mt-1">{promos.length} khuyến mãi</p>
+          <p className="text-muted-foreground text-sm mt-1">{total} khuyến mãi</p>
         </div>
         <button onClick={() => { setEditing(null); setShowForm(true); }}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-500/20">
@@ -97,6 +107,8 @@ export default function AdminPromotions() {
            );
          })}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
 
       {showForm && (
         <PromoFormModal promo={editing} onSave={handleSave}

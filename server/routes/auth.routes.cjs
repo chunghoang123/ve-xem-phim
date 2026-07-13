@@ -7,9 +7,8 @@ const { authenticate } = require('../middleware/auth.cjs');
 router.post('/send-otp', AuthController.sendOtp);
 router.post('/verify-otp', AuthController.verifyOtp);
 
-// Phone OTP (new registration)
-router.post('/send-sms-otp', AuthController.sendSmsOtp);
-router.post('/verify-sms-otp', AuthController.verifySmsOtp);
+// Standard email/password registration
+router.post('/register', AuthController.register);
 
 // Firebase Auth (Google / Facebook / Phone)
 router.post('/firebase-login', AuthController.firebaseLogin);
@@ -19,6 +18,8 @@ router.post('/social-login', AuthController.socialLogin);
 
 // Login (email/phone + password)
 router.post('/login', AuthController.login);
+router.post('/refresh', AuthController.refresh);
+router.post('/logout', AuthController.logout);
 
 // Profile
 router.get('/me', authenticate, AuthController.me);

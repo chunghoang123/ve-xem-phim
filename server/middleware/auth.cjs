@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'cinex_jwt_secret_key_2026';
+const { JWT_SECRET, isBlacklisted } = require('../services/token.service.cjs');
 
-function authenticate(req, res, next) {
+async function authenticate(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ success: false, message: 'Unauthorized - Vui lòng đăng nhập' });
@@ -12,6 +12,9 @@ function authenticate(req, res, next) {
   const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
+    if (decoded.type !== 'access' || await isBlacklisted(decoded.jti)) {
+      return res.status(401).json({ success: false, message: 'Unauthorized - Token đã bị thu hồi' });
+    }
     req.user = decoded;
     next();
   } catch {
@@ -19,12 +22,13 @@ function authenticate(req, res, next) {
   }
 }
 
-function optionalAuth(req, res, next) {
+async function optionalAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.split(' ')[1];
     try {
-      req.user = jwt.verify(token, JWT_SECRET);
+      const decoded = jwt.verify(token, JWT_SECRET);
+      if (decoded.type === 'access' && !(await isBlacklisted(decoded.jti))) req.user = decoded;
     } catch {
       // ignore invalid token
     }

@@ -2,11 +2,15 @@ import { useState, useEffect, useCallback } from "react";
 import { Search, Plus, Pencil, Trash2, X } from "lucide-react";
 import { formatDate } from "../../lib/utils";
 import { api } from "../../lib/api";
+import Pagination from "../../components/Pagination";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [editing, setEditing] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
@@ -14,14 +18,20 @@ export default function AdminUsers() {
   const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
-      const params = search ? `?search=${search}` : '';
-      const res = await api.get(`/users?limit=50${params}`);
+      const params = search ? `?search=${search}&page=${page}&limit=10` : `?page=${page}&limit=10`;
+      const res = await api.get(`/users${params}`);
       setUsers(res.data);
+      setTotalPages(res.pagination.totalPages);
+      setTotal(res.pagination.total);
     } catch (err) {
       setError(err.data?.message || "Lỗi tải dữ liệu");
     } finally {
       setLoading(false);
     }
+  }, [search, page]);
+
+  useEffect(() => {
+    setPage(1);
   }, [search]);
 
   useEffect(() => { const t = setTimeout(fetchUsers, 300); return () => clearTimeout(t); }, [fetchUsers]);
@@ -65,7 +75,7 @@ export default function AdminUsers() {
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">Quản lý người dùng</h1>
-          <p className="text-muted-foreground text-sm mt-1">{users.length} người dùng</p>
+          <p className="text-muted-foreground text-sm mt-1">{total} người dùng</p>
         </div>
         <button onClick={() => { setEditing(null); setShowForm(true); }}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-500/20">
@@ -129,6 +139,8 @@ export default function AdminUsers() {
           <p className="text-center py-10 text-muted-foreground text-sm">Không tìm thấy người dùng</p>
         )}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
 
       {showForm && (
         <UserFormModal user={editing} onSave={handleSave}

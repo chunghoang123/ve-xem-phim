@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, getTokenValue, setToken } from "../lib/api";
+import { api, clearTokens, getTokenValue, setTokens } from "../lib/api";
 import { AuthContext } from "../lib/auth-context";
 
 export default function AuthProvider({ children }) {
@@ -8,15 +8,11 @@ export default function AuthProvider({ children }) {
 
   const fetchUser = useCallback(async () => {
     const token = getTokenValue();
-    if (!token) {
-      setLoading(false);
-      return;
-    }
     try {
       const res = await api.get('/auth/me');
       setUser(res.data);
     } catch {
-      setToken(null);
+      clearTokens();
     } finally {
       setLoading(false);
     }
@@ -26,19 +22,27 @@ export default function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     const res = await api.post('/auth/login', { email, password });
-    setToken(res.data.token);
+    setTokens(res.data);
     setUser(res.data.user);
     return res.data.user;
   };
 
-  const loginWithPhone = async (phone, password) => {
-    const res = await api.post('/auth/login', { phone, password });
-    setToken(res.data.token);
-    setUser(res.data.user);
-    return res.data.user;
+  const completeExternalLogin = (authResult) => {
+    setTokens(authResult);
+    setUser(authResult.user);
+    return authResult.user;
   };
 
-  const logout = () => { setToken(null); setUser(null); };
+  const logout = async () => {
+    try {
+      await api.post('/auth/logout', {});
+    } catch {
+      // Local logout must still complete if the network is unavailable.
+    } finally {
+      clearTokens();
+      setUser(null);
+    }
+  };
 
   const refreshUser = async () => {
     try {
@@ -50,7 +54,7 @@ export default function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, loginWithPhone, logout, loading, refreshUser }}>
+    <AuthContext.Provider value={{ user, login, completeExternalLogin, logout, loading, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

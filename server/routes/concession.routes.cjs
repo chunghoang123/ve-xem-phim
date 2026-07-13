@@ -1,0 +1,2 @@
+const r=require('express').Router(); const c=require('../controllers/concession.controller.cjs'); const {authenticate,optionalAuth}=require('../middleware/auth.cjs'); const authorize=require('../middleware/authorize.cjs');
+r.get('/',optionalAuth,c.list); r.post('/',authenticate,authorize('admin'),c.save); r.put('/:id',authenticate,authorize('admin'),c.save); r.delete('/:id',authenticate,authorize('admin'),c.remove); module.exports=r;

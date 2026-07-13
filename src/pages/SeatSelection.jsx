@@ -3,11 +3,20 @@ import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Info, Check, Loader2 } from "lucide-react";
 import { formatCurrency } from "../lib/utils";
 import { api } from "../lib/api";
+import { useAuth } from "../lib/auth-context";
+
+function getAisleBreaks(seatCount) {
+  if (seatCount < 8) return [];
+  if (seatCount < 10) return [Math.floor(seatCount / 2)];
+  const sideBlockSize = Math.max(2, Math.floor(seatCount / 4));
+  return [sideBlockSize, seatCount - sideBlockSize];
+}
 
 export default function SeatSelection() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const time = searchParams.get("time") || "10:00";
   const date = searchParams.get("date") || "";
   const cinemaId = Number(searchParams.get("cinema")) || 1;
@@ -118,23 +127,25 @@ export default function SeatSelection() {
           <div className="min-w-fit mx-auto">
             {rows.map((row) => {
               const rowSeats = seats.filter(s => s.row_label === row).sort((a, b) => a.seat_number - b.seat_number);
+              const aisleBreaks = getAisleBreaks(rowSeats.length);
               return (
-                <div key={row} className="flex items-center gap-1 sm:gap-1.5 mb-1 sm:mb-1.5">
-                  <span className="w-5 sm:w-6 text-center text-[10px] sm:text-xs font-bold text-muted-foreground shrink-0">{row}</span>
-                  <div className="flex gap-0.5 sm:gap-1 justify-center flex-1">
+                <div key={row} className="flex items-center gap-1 sm:gap-1.5 mb-1.5 sm:mb-2">
+                  <span className="w-5 sm:w-7 text-center text-[10px] sm:text-xs font-bold text-muted-foreground shrink-0">{row}</span>
+                  <div className="flex gap-1 sm:gap-1.5 justify-center flex-1">
                     {rowSeats.map((seat, idx) => {
                       const seatId = `${seat.row_label}${seat.seat_number}`;
                       const isSelected = selectedSeats.includes(seatId);
-                      const isLeftGap = idx === 2 || idx === 8;
+                      const startsAfterAisle = aisleBreaks.includes(idx);
                       return (
-                        <div key={seatId} className={`${isLeftGap ? "ml-2 sm:ml-3" : ""}`}>
+                        <div key={seatId} className={startsAfterAisle ? "ml-3 sm:ml-6" : ""}>
                           <button onClick={() => toggleSeat(seatId)}
                             disabled={seat.is_booked}
-                            className={`w-6 h-6 sm:w-8 sm:h-8 rounded-t-md sm:rounded-t-lg rounded-b-sm sm:rounded-b-md text-[8px] sm:text-xs font-medium transition-all flex items-center justify-center ${
+                            aria-label={`Ghế ${seatId}${seat.is_vip ? ', VIP' : ', thường'}${seat.is_booked ? ', đã đặt' : ''}`}
+                            className={`w-7 h-7 sm:w-9 sm:h-9 rounded-t-md sm:rounded-t-lg rounded-b-sm sm:rounded-b-md border-b-2 text-[9px] sm:text-xs font-medium transition-all flex items-center justify-center ${
                               seat.is_booked ? "bg-slate-800 text-slate-600 cursor-not-allowed" :
-                              seat.is_vip && !isSelected ? "bg-amber-600 text-amber-200 hover:bg-amber-500" :
-                              !seat.is_vip && !isSelected ? "bg-slate-600 text-slate-300 hover:bg-slate-500" :
-                              "bg-purple-500 text-white scale-110 shadow-lg shadow-purple-500/30"
+                              seat.is_vip && !isSelected ? "border-amber-800 bg-amber-600 text-amber-100 hover:bg-amber-500" :
+                              !seat.is_vip && !isSelected ? "border-slate-800 bg-slate-600 text-slate-200 hover:bg-slate-500" :
+                              "border-purple-700 bg-purple-500 text-white scale-110 shadow-lg shadow-purple-500/30"
                             }`}
                             title={`${seatId}${seat.is_vip ? ' (VIP)' : ''}${seat.is_booked ? ' (Đã đặt)' : ''}`}>
                             {seat.is_booked ? "✕" : isSelected ? <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> : seat.seat_number}
@@ -143,7 +154,7 @@ export default function SeatSelection() {
                       );
                     })}
                   </div>
-                  <span className="w-5 sm:w-6 text-center text-[10px] sm:text-xs font-bold text-muted-foreground shrink-0">{row}</span>
+                  <span className="w-5 sm:w-7 text-center text-[10px] sm:text-xs font-bold text-muted-foreground shrink-0">{row}</span>
                 </div>
               );
             })}
@@ -196,6 +207,10 @@ export default function SeatSelection() {
           </div>
           <button disabled={selectedSeats.length === 0 || holding}
             onClick={async () => {
+              if (!user) {
+                window.dispatchEvent(new CustomEvent('cinex:open-login'));
+                return;
+              }
               setHolding(true);
               try {
                 const seatIds = selectedSeats.map(label => {

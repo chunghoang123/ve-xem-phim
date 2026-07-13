@@ -83,14 +83,14 @@ const BookingV1Controller = {
       }, 'Giữ ghế thành công', 201);
     } catch (err) {
       console.error('seatHold error:', err);
-      const status = ['SEATS_UNAVAILABLE', 'INVALID_SEATS'].includes(err.code) ? 409 : 500;
+      const status = ['SEATS_UNAVAILABLE', 'INVALID_SEATS', 'SHOWTIME_CLOSED'].includes(err.code) ? 409 : 500;
       return error(res, err.message || 'Lỗi giữ ghế', status);
     }
   },
 
   async createBooking(req, res) {
     try {
-      const { seat_hold_code } = req.body;
+      const { seat_hold_code, concessions } = req.body;
       if (!seat_hold_code) {
         return error(res, 'Thiếu mã giữ ghế', 400);
       }
@@ -98,6 +98,7 @@ const BookingV1Controller = {
       const result = await BookingService.createBookingFromHold({
         userId: req.user.userId,
         seatHoldCode: seat_hold_code,
+        concessions,
       });
 
       if (!result.success) {
@@ -116,6 +117,8 @@ const BookingV1Controller = {
         seat_codes: result.seatCodes,
         subtotal: result.subtotal,
         service_fee: result.serviceFee,
+        concessions: result.concessions || [],
+        concessions_total: result.concessionTotal || 0,
         discount_amount: 0,
         total_amount: result.totalAmount,
         expires_at: result.expiresAt,
@@ -141,6 +144,22 @@ const BookingV1Controller = {
     } catch (err) {
       console.error('releaseHold error:', err);
       return error(res, 'Lỗi giải phóng ghế', 500);
+    }
+  },
+
+  async cancelBooking(req, res) {
+    try {
+      const booking = await BookingModel.findByCode(req.params.bookingCode);
+      if (!booking) return error(res, 'Không tìm thấy đơn đặt vé', 404);
+      const result = await BookingService.cancelBooking(booking.id, req.user.userId);
+      if (!result.success) {
+        const status = result.code === 'FORBIDDEN' ? 403 : result.code === 'INVALID_BOOKING_STATUS' ? 409 : 400;
+        return error(res, result.message, status);
+      }
+      return success(res, null, result.message);
+    } catch (err) {
+      console.error('cancelBooking error:', err);
+      return error(res, 'Lỗi hủy đơn đặt vé', 500);
     }
   },
 
@@ -196,7 +215,9 @@ const BookingV1Controller = {
         show_time: showtime?.time,
         seats: seatDetails,
         subtotal: seatDetails.reduce((sum, s) => sum + s.price, 0),
-        service_fee: bill.total - seatDetails.reduce((sum, s) => sum + s.price, 0),
+        concessions: JSON.parse(booking.concessions_json || '[]'),
+        concessions_total: JSON.parse(booking.concessions_json || '[]').reduce((sum, item) => sum + Number(item.line_total || 0), 0),
+        service_fee: bill.total - seatDetails.reduce((sum, s) => sum + s.price, 0) - JSON.parse(booking.concessions_json || '[]').reduce((sum, item) => sum + Number(item.line_total || 0), 0),
         discount_amount: 0,
         total_amount: bill.total,
         expires_at: bill.expires_at,

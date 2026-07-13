@@ -1,0 +1,13 @@
+{
+  "output": "outputs\\completed\\Template-Technical-Completed.xlsx",
+  "sheets": [
+    "0. Roadmap",
+    "1. Project Charter",
+    "2. Master Planxxx",
+    "2. Price",
+    "3. Master Plan",
+    "4. Nhân sự dự án",
+    "7. Cập nhật tiến độ"
+  ],
+  "formula_errors": []
+}

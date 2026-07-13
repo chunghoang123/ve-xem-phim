@@ -24,6 +24,7 @@ import AdminBookings from "./pages/admin/AdminBookings";
 import AdminPromotions from "./pages/admin/AdminPromotions";
 import AdminCinemas from "./pages/admin/AdminCinemas";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminConcessions from "./pages/admin/AdminConcessions";
 
 function MainLayout() {
   return (
@@ -65,6 +66,7 @@ export default function App() {
               <Route path="promotions" element={<AdminPromotions />} />
               <Route path="cinemas" element={<AdminCinemas />} />
               <Route path="users" element={<AdminUsers />} />
+              <Route path="concessions" element={<AdminConcessions />} />
             </Route>
           </Routes>
         </LocationProvider>

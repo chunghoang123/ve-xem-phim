@@ -13,4 +13,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.addScope("openid");
+googleProvider.addScope("email");
+googleProvider.addScope("profile");
+googleProvider.setCustomParameters({ prompt: "select_account" });
 export const facebookProvider = new FacebookAuthProvider();
+facebookProvider.addScope("public_profile");

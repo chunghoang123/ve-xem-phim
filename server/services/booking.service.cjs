@@ -2,9 +2,11 @@ const pool = require('../config/database.cjs');
 const BookingModel = require('../models/booking.model.cjs');
 const SeatHoldModel = require('../models/seatHold.model.cjs');
 const TicketModel = require('../models/ticket.model.cjs');
+const { calculateConcessions } = require('../config/concessions.cjs');
+const { calculateBookingTotal } = require('../utils/billing.cjs');
 
 const BookingService = {
-  async createBookingFromHold({ userId, seatHoldCode }) {
+  async createBookingFromHold({ userId, seatHoldCode, concessions = [] }) {
     const conn = await pool.getConnection();
     try {
       await conn.beginTransaction();
@@ -43,6 +45,8 @@ const BookingService = {
             );
             await conn.commit();
             const subtotal = existingSeats.reduce((sum, seat) => sum + Number(seat.unit_price || 0), 0);
+            const concessionItems = JSON.parse(existing.concessions_json || '[]');
+            const concessionTotal = concessionItems.reduce((sum, item) => sum + Number(item.line_total || 0), 0);
             return {
               success: true,
               booking: existing,
@@ -56,7 +60,9 @@ const BookingService = {
               show_time: existing.show_time,
               seatCodes: existingSeats.map((seat) => `${seat.row_label}${seat.seat_number}`),
               subtotal,
-              serviceFee: Number(existing.total) - subtotal,
+              concessions: concessionItems,
+              concessionTotal,
+              serviceFee: Number(existing.total) - subtotal - concessionTotal,
               totalAmount: Number(existing.total),
               expiresAt: existing.expires_at,
               reused: true,
@@ -93,6 +99,19 @@ const BookingService = {
         return { success: false, message: 'Suất chiếu không tồn tại', code: 'SHOWTIME_NOT_FOUND' };
       }
 
+      const [bookableRows] = await conn.query(
+        `SELECT id FROM showtimes
+         WHERE id = ? AND TIMESTAMP(date, time) > NOW()
+           AND COALESCE(status, 'AVAILABLE') = 'AVAILABLE'
+         FOR UPDATE`,
+        [hold.showtime_id]
+      );
+      if (bookableRows.length === 0) {
+        await conn.query("UPDATE seat_holds SET status = 'EXPIRED' WHERE id = ?", [hold.id]);
+        await conn.commit();
+        return { success: false, message: 'Suất chiếu đã bắt đầu hoặc đã bị khóa', code: 'SHOWTIME_CLOSED' };
+      }
+
       const [holdSeats] = await conn.query(
         `SELECT shs.*, s.row_label, s.seat_number, s.is_vip, s.id as seat_id
          FROM seat_hold_seats shs
@@ -127,8 +146,23 @@ const BookingService = {
         seatPrices.push({ seatId: hs.seat_id, price, rowLabel: hs.row_label, seatNumber: hs.seat_number });
       }
 
-      const serviceFee = Math.round(subtotal * 0.02);
-      const totalAmount = subtotal + serviceFee;
+      let { serviceFee } = calculateBookingTotal(subtotal, 0);
+      const requested = calculateConcessions(concessions);
+      const ids = requested.items.map(item => item.id);
+      let concessionOrder = { items: [], total: 0 };
+      if (ids.length) {
+        const [products] = await conn.query(`SELECT * FROM concessions WHERE id IN (${ids.map(()=>'?').join(',')}) AND status='ACTIVE' FOR UPDATE`, ids);
+        concessionOrder.items = requested.items.map(item => {
+          const product = products.find(p => p.id === item.id);
+          if (!product || product.stock < item.quantity) throw Object.assign(new Error(`${item.name} đã hết hàng`), { code: 'OUT_OF_STOCK' });
+          return { id: product.id, name: product.name, price: Number(product.price), quantity: item.quantity, line_total: Number(product.price)*item.quantity };
+        });
+        concessionOrder.total = concessionOrder.items.reduce((s,i)=>s+i.line_total,0);
+        for (const item of concessionOrder.items) await conn.query('UPDATE concessions SET stock=stock-? WHERE id=?',[item.quantity,item.id]);
+      }
+      const calculatedTotal = calculateBookingTotal(subtotal, concessionOrder.total);
+      serviceFee = calculatedTotal.serviceFee;
+      const totalAmount = calculatedTotal.totalAmount;
 
       const bookingCode = 'BK' + Date.now();
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
@@ -136,9 +170,9 @@ const BookingService = {
       const seatsJson = JSON.stringify(seatCodes);
 
       const [bookingResult] = await conn.query(
-        `INSERT INTO bookings (code, user_id, showtime_id, seats_json, total, payment_method, status, booking_type, seat_hold_id, expires_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [bookingCode, userId, hold.showtime_id, seatsJson, totalAmount, 'payos', 'PENDING_PAYMENT', 'manual', hold.id, expiresAt]
+        `INSERT INTO bookings (code, user_id, showtime_id, seats_json, concessions_json, total, payment_method, status, booking_type, seat_hold_id, expires_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [bookingCode, userId, hold.showtime_id, seatsJson, JSON.stringify(concessionOrder.items), totalAmount, 'payos', 'PENDING_PAYMENT', 'manual', hold.id, expiresAt]
       );
       const bookingId = bookingResult.insertId;
 
@@ -205,6 +239,8 @@ const BookingService = {
         seatCodes,
         subtotal,
         serviceFee,
+        concessions: concessionOrder.items,
+        concessionTotal: concessionOrder.total,
         totalAmount,
         expiresAt,
       };
@@ -361,6 +397,9 @@ const BookingService = {
     const booking = await BookingModel.findById(bookingId);
     if (!booking) return { success: false, message: 'Không tìm thấy đơn đặt vé', code: 'BOOKING_NOT_FOUND' };
     if (booking.user_id !== userId) return { success: false, message: 'Forbidden', code: 'FORBIDDEN' };
+    if (booking.status !== 'PENDING_PAYMENT') {
+      return { success: false, message: 'Chỉ có thể hủy đơn đang chờ thanh toán', code: 'INVALID_BOOKING_STATUS' };
+    }
 
     await pool.query(
       "UPDATE bookings SET status = 'CANCELLED', cancelled_at = NOW() WHERE id = ? AND status = 'PENDING_PAYMENT'",

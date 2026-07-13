@@ -2,26 +2,36 @@ import { useState, useEffect, useCallback } from "react";
 import { X, Eye } from "lucide-react";
 import { formatCurrency, formatDate, formatDateTime, handleImgError } from "../../lib/utils";
 import { api } from "../../lib/api";
+import Pagination from "../../components/Pagination";
 
 export default function AdminBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [detail, setDetail] = useState(null);
   const [error, setError] = useState("");
 
   const fetchBookings = useCallback(async () => {
     try {
       setLoading(true);
-      let params = '?limit=50';
+      let params = `?page=${page}&limit=10`;
       if (statusFilter) params += `&status=${statusFilter}`;
       const res = await api.get(`/bookings${params}`);
       setBookings(res.data);
+      setTotalPages(res.pagination.totalPages);
+      setTotal(res.pagination.total);
     } catch (err) {
       setError(err.data?.message || "Lỗi tải dữ liệu");
     } finally {
       setLoading(false);
     }
+  }, [statusFilter, page]);
+
+  useEffect(() => {
+    setPage(1);
   }, [statusFilter]);
 
   useEffect(() => { fetchBookings(); }, [fetchBookings]);
@@ -31,7 +41,7 @@ export default function AdminBookings() {
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">Quản lý vé đặt</h1>
-          <p className="text-muted-foreground text-sm mt-1">{bookings.length} vé</p>
+          <p className="text-muted-foreground text-sm mt-1">{total} vé</p>
         </div>
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
           className="px-3.5 py-2.5 rounded-xl bg-card border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
@@ -96,6 +106,8 @@ export default function AdminBookings() {
           <p className="text-center py-10 text-muted-foreground text-sm">Không tìm thấy vé</p>
         )}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
 
       {detail && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm animate-fade" onClick={() => setDetail(null)}>

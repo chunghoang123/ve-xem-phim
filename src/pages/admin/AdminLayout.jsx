@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Film, Clock, Ticket, Gift, Menu, X, ArrowLeftFromLine, Building2, Users, Shield } from "lucide-react";
+import { LayoutDashboard, Film, Clock, Ticket, Gift, Menu, X, ArrowLeftFromLine, Building2, Users, Shield, Popcorn } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useAuth } from "../../lib/auth-context";
 
@@ -11,6 +11,7 @@ const sidebarLinks = [
   { to: "/admin/cinemas", label: "Rạp chiếu", icon: Building2 },
   { to: "/admin/bookings", label: "Đặt vé", icon: Ticket },
   { to: "/admin/promotions", label: "Khuyến mãi", icon: Gift },
+  { to: "/admin/concessions", label: "Bắp & nước", icon: Popcorn },
   { to: "/admin/users", label: "Người dùng", icon: Users },
 ];
 

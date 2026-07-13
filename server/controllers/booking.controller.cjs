@@ -47,6 +47,10 @@ const BookingController = {
       const showtime = await ShowtimeModel.findById(showtime_id);
       if (!showtime) return error(res, 'Suất chiếu không tồn tại', 404);
 
+      if (!(await ShowtimeModel.isBookable(showtime_id))) {
+        return error(res, 'Suất chiếu đã bắt đầu hoặc đã bị khóa', 409);
+      }
+
       const total = seats.length * showtime.ticket_price;
 
       const booking = await BookingModel.create({
@@ -80,6 +84,10 @@ const BookingController = {
       const ShowtimeModel = require('../models/showtime.model.cjs');
       const showtime = await ShowtimeModel.findById(showtime_id);
       if (!showtime) return error(res, 'Suất chiếu không tồn tại', 404);
+
+      if (!(await ShowtimeModel.isBookable(showtime_id))) {
+        return error(res, 'Suất chiếu đã bắt đầu hoặc đã bị khóa', 409);
+      }
 
       const total = seats.length * (showtime.ticket_price || showtime.price || 75000);
 

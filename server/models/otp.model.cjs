@@ -43,6 +43,14 @@ const OtpModel = {
     return rows[0] || null;
   },
 
+  async findLatestPhone(phone) {
+    const [rows] = await pool.query(
+      'SELECT * FROM phone_otps WHERE phone = ? AND is_used = 0 AND expires_at > NOW() ORDER BY created_at DESC LIMIT 1',
+      [phone]
+    );
+    return rows[0] || null;
+  },
+
   async markPhoneUsed(id) {
     await pool.query('UPDATE phone_otps SET is_used = 1 WHERE id = ?', [id]);
   },

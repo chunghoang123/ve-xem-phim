@@ -1,0 +1,3 @@
+{"kind":"workbook","id":"wb/tvtbxc","sheets":1,"tables":1}
+{"kind":"sheet","id":"ws/v0orj1","name":"Trang tính1","index":0,"range":"A1:G9","address":"A1:G9","tables":1}
+{"kind":"table","sheet":"Trang tính1","address":"A1:G9","rows":9,"cols":7,"values":[["BẢNG BIỂU KẾ HOẠCH",null,null,null,null,null,null],[null,null,null,null,null,null,null],["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ Nhật"],[null,null,null,null,null,null,null],[null,null,null,null,null,null,null],[null,null,null,null,null,null,null],[null,null,null,null,null,null,null],[null,null,null,null,null,null,null],["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ Nhật"]]}
