@@ -11,7 +11,7 @@ function generateOtp() {
 }
 
 async function getRoleName(roleId) {
-  const roleNames = { 1: 'admin', 2: 'staff', 3: 'user' };
+  const roleNames = { 1: 'admin', 2: 'user' };
   return roleNames[roleId] || 'user';
 }
 
@@ -105,7 +105,7 @@ const AuthController = {
         name: name.trim(),
         email: normalizedEmail,
         password: hashedPassword,
-        role_id: 3,
+        role_id: 2,
       });
       const roleName = await getRoleName(user.role_id);
       const tokens = await issueTokens(user, roleName);
@@ -182,7 +182,7 @@ const AuthController = {
           avatar: picture || null,
           auth_provider: provider,
           social_id: uid,
-          role_id: 3,
+          role_id: 2,
         });
       }
 
@@ -250,7 +250,7 @@ const AuthController = {
         name: record.name,
         email: record.email,
         password: record.password,
-        role_id: 3,
+        role_id: 2,
       });
 
       const roleName = await getRoleName(user.role_id);
@@ -358,7 +358,7 @@ const AuthController = {
         name: record.name,
         phone: record.phone,
         password: record.password,
-        role_id: 3,
+        role_id: 2,
       });
 
       const roleName = await getRoleName(user.role_id);
@@ -449,7 +449,7 @@ const AuthController = {
           avatar: userInfo.avatar || null,
           auth_provider: provider,
           social_id: userInfo.socialId,
-          role_id: 3,
+          role_id: 2,
         });
       }
 

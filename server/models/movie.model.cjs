@@ -86,6 +86,33 @@ const MovieModel = {
     `);
     return rows;
   },
+
+  async findHomeSections({ nowLimit = 8, upcomingLimit = 8 } = {}) {
+    const safeNowLimit = Math.max(1, Math.min(50, Number(nowLimit) || 8));
+    const safeUpcomingLimit = Math.max(1, Math.min(50, Number(upcomingLimit) || 8));
+    const [nowShowing] = await pool.query(`
+      SELECT m.*
+      FROM movies m
+      WHERE m.status = 'active'
+        AND (m.release_date IS NULL OR m.release_date <= CURDATE())
+        AND EXISTS (
+          SELECT 1 FROM showtimes s
+          WHERE s.movie_id = m.id
+            AND TIMESTAMP(s.date, s.time) > NOW()
+            AND COALESCE(s.status, 'AVAILABLE') = 'AVAILABLE'
+        )
+      ORDER BY m.popularity DESC, m.release_date DESC, m.title ASC
+      LIMIT ?
+    `, [safeNowLimit]);
+    const [upcoming] = await pool.query(`
+      SELECT m.*
+      FROM movies m
+      WHERE m.release_date > CURDATE()
+      ORDER BY m.release_date ASC, m.popularity DESC, m.title ASC
+      LIMIT ?
+    `, [safeUpcomingLimit]);
+    return { nowShowing, upcoming };
+  },
 };
 
 module.exports = MovieModel;

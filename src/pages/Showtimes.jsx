@@ -32,6 +32,16 @@ export default function Showtimes() {
   const [nearbyMap, setNearbyMap] = useState({});
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoNotification, setGeoNotification] = useState("");
+  const [expandedCinemas, setExpandedCinemas] = useState(() => new Set());
+
+  const toggleCinema = (cinemaId) => {
+    setExpandedCinemas(current => {
+      const next = new Set(current);
+      if (next.has(cinemaId)) next.delete(cinemaId);
+      else next.add(cinemaId);
+      return next;
+    });
+  };
 
   const selectedProvinceName = provinces.find(p => p.id === selectedProvince)?.name || "Chọn tỉnh/thành";
 
@@ -342,20 +352,38 @@ export default function Showtimes() {
                   <div key={district.district} className="mb-5">
                     <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">{district.district}</h3>
                     <div className="space-y-4">
-                      {(district.cinemas || []).map(cinema => (
-                        <div key={cinema.cinemaId} className="bg-card border border-border rounded-xl p-4">
-                          <div className="flex items-center justify-between gap-2 mb-3">
-                            <div>
+                      {(district.cinemas || []).map(cinema => {
+                        const isExpanded = expandedCinemas.has(cinema.cinemaId);
+                        const movieCount = (cinema.movies || []).length;
+                        const showtimeCount = (cinema.movies || []).reduce(
+                          (total, movie) => total + (movie.dates || []).reduce(
+                            (dateTotal, date) => dateTotal + (date.showtimes || []).length,
+                            0
+                          ),
+                          0
+                        );
+                        return (
+                        <div key={cinema.cinemaId} className="bg-card border border-border rounded-xl overflow-hidden">
+                          <button type="button" onClick={() => toggleCinema(cinema.cinemaId)}
+                            aria-expanded={isExpanded}
+                            className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-muted/40 transition-colors">
+                            <div className="min-w-0">
                               <h4 className="font-bold text-sm sm:text-base">{cinema.cinemaName}</h4>
-                              <p className="text-xs text-muted-foreground mt-0.5">Địa chỉ: {cinema.address}</p>
+                              <p className="text-xs text-muted-foreground mt-0.5 truncate">Địa chỉ: {cinema.address}</p>
+                              <p className="text-[11px] text-purple-400 mt-1 font-medium">
+                                {movieCount} phim · {showtimeCount} suất chiếu
+                              </p>
                             </div>
-                            {cinema.distanceKm && (
-                              <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 font-medium flex items-center gap-1 shrink-0">
-                                <Navigation2 className="w-2.5 h-2.5" /> {cinema.distanceKm} km
-                              </span>
-                            )}
-                          </div>
-                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 shrink-0">
+                              {cinema.distanceKm && (
+                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 font-medium flex items-center gap-1">
+                                  <Navigation2 className="w-2.5 h-2.5" /> {cinema.distanceKm} km
+                                </span>
+                              )}
+                              <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                            </div>
+                          </button>
+                          {isExpanded && <div className="space-y-3 border-t border-border p-4">
                             {(cinema.movies || []).map(movie => {
                               const dates = Array.isArray(movie.dates) ? movie.dates : [];
                               return (
@@ -392,9 +420,10 @@ export default function Showtimes() {
                                 </div>
                               );
                             })}
-                          </div>
+                          </div>}
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 ))}

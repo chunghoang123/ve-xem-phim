@@ -11,8 +11,8 @@ router.get('/places/nearby', CinemaController.searchNearbyPlaces);
 router.get('/places/:placeId', CinemaController.getPlaceDetails);
 router.get('/places/photo/:photoName', CinemaController.getPlacePhotoUrl);
 router.get('/:id', CinemaController.getById);
-router.post('/', authenticate, authorize('admin', 'staff'), CinemaController.create);
-router.put('/:id', authenticate, authorize('admin', 'staff'), CinemaController.update);
+router.post('/', authenticate, authorize('admin'), CinemaController.create);
+router.put('/:id', authenticate, authorize('admin'), CinemaController.update);
 router.delete('/:id', authenticate, authorize('admin'), CinemaController.delete);
 
 module.exports = router;

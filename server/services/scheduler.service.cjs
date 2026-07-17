@@ -2,10 +2,70 @@ const pool = require('../config/database.cjs');
 const SeatHoldModel = require('../models/seatHold.model.cjs');
 const PaymentModel = require('../models/payment.model.cjs');
 const BookingService = require('./booking.service.cjs');
+const { syncMovies } = require('./tmdb.service.cjs');
+const YouTubeService = require('./youtube.service.cjs');
+const ShowtimeSchedulerService = require('./showtime-scheduler.service.cjs');
 
 let intervalId = null;
+let movieSyncIntervalId = null;
 let running = false;
+let movieSyncRunning = false;
 let lastRollingDate = null;
+
+function movieSyncConfig() {
+  const hours = Number(process.env.TMDB_SYNC_INTERVAL_HOURS) || 12;
+  const pages = Math.max(1, Math.min(5, Number(process.env.TMDB_SYNC_PAGES) || 1));
+  const allowedTypes = new Set(['upcoming', 'now_playing', 'popular', 'top_rated']);
+  const requestedTypes = String(process.env.TMDB_SYNC_TYPES || 'upcoming,now_playing,popular')
+    .split(',')
+    .map(type => type.trim())
+    .filter(type => allowedTypes.has(type));
+
+  return {
+    enabled: (process.env.TMDB_SYNC_ENABLED !== 'false' && Boolean(process.env.TMDB_API_KEY))
+      || YouTubeService.isConfigured(),
+    tmdbEnabled: process.env.TMDB_SYNC_ENABLED !== 'false' && Boolean(process.env.TMDB_API_KEY),
+    intervalMs: Math.max(1, hours) * 60 * 60 * 1000,
+    pages,
+    types: requestedTypes.length ? requestedTypes : ['upcoming', 'now_playing', 'popular'],
+    youtubeTrailerLimit: Math.max(1, Math.min(50, Number(process.env.YOUTUBE_TRAILER_SYNC_LIMIT) || 50)),
+    showtimeDaysAhead: Math.max(1, Math.min(30, Number(process.env.AUTO_SHOWTIME_DAYS_AHEAD) || 7)),
+    showtimeMovieLimit: Math.max(1, Math.min(20, Number(process.env.AUTO_SHOWTIME_MOVIE_LIMIT) || 20)),
+  };
+}
+
+async function runMovieSync(config = movieSyncConfig()) {
+  if (!config.enabled || movieSyncRunning) return 0;
+  movieSyncRunning = true;
+  let total = 0;
+  try {
+    if (config.tmdbEnabled) {
+      for (const type of config.types) {
+        for (let page = 1; page <= config.pages; page++) {
+          total += await syncMovies(type, page);
+        }
+      }
+    }
+    const scheduledMovies = await ShowtimeSchedulerService.ensureShowtimesForNewMovies({
+      daysAhead: config.showtimeDaysAhead,
+      movieLimit: config.showtimeMovieLimit,
+    });
+    const trailers = await YouTubeService.updateMissingTrailers(config.youtubeTrailerLimit);
+    if (config.tmdbEnabled) {
+      console.log(`TMDB automatic sync completed: ${total} movies refreshed`);
+    }
+    if (trailers.configured) {
+      console.log(`YouTube trailer sync completed: ${trailers.updated}/${trailers.checked} updated`);
+    }
+    const createdShowtimes = scheduledMovies.reduce((sum, movie) => sum + movie.created, 0);
+    if (scheduledMovies.length) {
+      console.log(`Automatic showtime update completed: ${createdShowtimes} showtimes for ${scheduledMovies.length} movies`);
+    }
+    return total;
+  } finally {
+    movieSyncRunning = false;
+  }
+}
 
 async function closeStartedShowtimes() {
   const [result] = await pool.query(
@@ -121,6 +181,15 @@ const SchedulerService = {
         console.error('Scheduler error:', err.message);
       }
     }, intervalMs);
+
+    const syncConfig = movieSyncConfig();
+    if (syncConfig.enabled && !movieSyncIntervalId) {
+      console.log(`TMDB automatic sync started (every ${syncConfig.intervalMs / 3600000} hours)`);
+      runMovieSync(syncConfig).catch(err => console.error('TMDB automatic sync error:', err.message));
+      movieSyncIntervalId = setInterval(() => {
+        runMovieSync(syncConfig).catch(err => console.error('TMDB automatic sync error:', err.message));
+      }, syncConfig.intervalMs);
+    }
   },
 
   stop() {
@@ -129,11 +198,18 @@ const SchedulerService = {
       intervalId = null;
       console.log('Scheduler stopped');
     }
+    if (movieSyncIntervalId) {
+      clearInterval(movieSyncIntervalId);
+      movieSyncIntervalId = null;
+      console.log('TMDB automatic sync stopped');
+    }
   },
 
   closeStartedShowtimes,
   ensureRollingShowtimes,
   runMaintenance,
+  runMovieSync,
+  movieSyncConfig,
 };
 
 module.exports = SchedulerService;

@@ -2,7 +2,8 @@ const payos = require('../config/payos.cjs');
 const PayOSService = require('../services/payos.service.cjs');
 const { success, error } = require('../utils/helpers.cjs');
 
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const CLIENT_URL = process.env.CLIENT_URL
+  || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : 'http://localhost:5173');
 
 const PayOSController = {
   async checkout(req, res) {

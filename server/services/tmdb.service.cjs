@@ -71,42 +71,70 @@ async function syncMovies(listType = 'now_playing', page = 1) {
   let synced = 0;
   for (const item of results) {
     try {
-    const exists = await findExisting(item.id);
-    if (exists) {
+      const detail = await fetchTMDB(`/movie/${item.id}`, { append_to_response: 'videos,credits' });
+      const trailer = (detail.videos?.results || []).find(v => v.type === 'Trailer' && v.site === 'YouTube');
+      const director = (detail.credits?.crew || []).find(person => person.job === 'Director')?.name || null;
+      const cast = (detail.credits?.cast || []).slice(0, 5).map(person => person.name).join(', ') || null;
+      const genreIds = detail.genres?.map(genre => genre.id) || item.genre_ids || [];
+      const status = listType === 'upcoming' ? 'inactive' : 'active';
+      const exists = await findExisting(item.id);
+
+      if (exists) {
+        await pool.query(
+          `UPDATE movies SET
+            title = ?, genre = ?, duration = ?, rating = ?,
+            poster = COALESCE(?, poster), backdrop = COALESCE(?, backdrop),
+            director = COALESCE(?, director), cast = COALESCE(?, cast),
+            description = ?, release_date = ?, popularity = ?,
+            trailer_url = COALESCE(?, trailer_url), language = ?, status = ?,
+            updated_at = CURRENT_TIMESTAMP
+           WHERE tmdb_id = ?`,
+          [
+            detail.title || item.title,
+            mapGenres(genreIds),
+            detail.runtime || 90,
+            mapRating(detail.adult, detail.vote_average),
+            detail.poster_path ? `${TMDB_IMAGE}/w500${detail.poster_path}` : null,
+            detail.backdrop_path ? `${TMDB_IMAGE}/original${detail.backdrop_path}` : null,
+            director,
+            cast,
+            detail.overview || item.overview || 'Đang cập nhật',
+            detail.release_date || item.release_date || null,
+            detail.popularity || item.popularity || 0,
+            trailer ? `https://youtube.com/watch?v=${trailer.key}` : null,
+            detail.original_language || item.original_language || 'en',
+            status,
+            item.id,
+          ]
+        );
+        synced++;
+        continue;
+      }
+
       await pool.query(
-        `UPDATE movies SET popularity = ?, status = ? WHERE tmdb_id = ?`,
-        [item.popularity || 0, listType === 'upcoming' ? 'inactive' : 'active', item.id]
+        `INSERT INTO movies (tmdb_id, title, genre, duration, rating, poster, backdrop, director, cast, description, release_date, ticket_price, vip_price, popularity, trailer_url, language, status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          item.id,
+          detail.title || item.title,
+          mapGenres(genreIds),
+          detail.runtime || 90,
+          mapRating(detail.adult, detail.vote_average),
+          detail.poster_path ? `${TMDB_IMAGE}/w500${detail.poster_path}` : null,
+          detail.backdrop_path ? `${TMDB_IMAGE}/original${detail.backdrop_path}` : null,
+          director || 'Đang cập nhật',
+          cast || 'Đang cập nhật',
+          detail.overview || item.overview || 'Đang cập nhật',
+          detail.release_date || item.release_date || null,
+          75000,
+          120000,
+          detail.popularity || item.popularity || 0,
+          trailer ? `https://youtube.com/watch?v=${trailer.key}` : null,
+          detail.original_language || item.original_language || 'en',
+          status,
+        ]
       );
-      continue;
-    }
-
-    const detail = await fetchTMDB(`/movie/${item.id}`, { append_to_response: 'videos' });
-    const trailer = (detail.videos?.results || []).find(v => v.type === 'Trailer' && v.site === 'YouTube');
-
-    await pool.query(
-      `INSERT INTO movies (tmdb_id, title, genre, duration, rating, poster, backdrop, director, cast, description, release_date, ticket_price, vip_price, popularity, trailer_url, language, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        item.id,
-        item.title,
-        mapGenres(item.genre_ids || []),
-        item.adult ? 120 : 90,
-        mapRating(item.adult, item.vote_average),
-        item.poster_path ? `${TMDB_IMAGE}/w500${item.poster_path}` : null,
-        item.backdrop_path ? `${TMDB_IMAGE}/original${item.backdrop_path}` : null,
-        'Đang cập nhật',
-        'Đang cập nhật',
-        item.overview || 'Đang cập nhật',
-        item.release_date || null,
-        75000,
-        120000,
-        item.popularity || 0,
-        trailer ? `https://youtube.com/watch?v=${trailer.key}` : null,
-        item.original_language || 'en',
-        listType === 'upcoming' ? 'inactive' : 'active'
-      ]
-    );
-    synced++;
+      synced++;
     } catch (err) {
       console.error(`Sync error for movie ${item.id}:`, err.message);
     }

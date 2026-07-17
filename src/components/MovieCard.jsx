@@ -2,10 +2,15 @@ import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 import { formatCurrency, handleImgError } from "../lib/utils";
 
-export default function MovieCard({ movie, index }) {
+export default function MovieCard({ movie, index, comingSoon = false }) {
+  const Wrapper = comingSoon ? "div" : Link;
+  const releaseDate = movie.release_date
+    ? new Date(movie.release_date).toLocaleDateString("vi-VN")
+    : null;
+
   return (
-    <Link to={`/movies/${movie.id}`}
-      className="group block"
+    <Wrapper {...(!comingSoon ? { to: `/movies/${movie.id}` } : {})}
+      className={`group block ${comingSoon ? "cursor-default" : ""}`}
         style={index !== undefined ? { animation: `enter 0.4s ease-out ${index * 0.08}s both` } : undefined}>
         <div className="relative aspect-[2/3] rounded-xl sm:rounded-2xl overflow-hidden mb-3">
           <img src={movie.poster || ''} alt={movie.title} onError={handleImgError}
@@ -24,14 +29,23 @@ export default function MovieCard({ movie, index }) {
               {movie.rating}
             </span>
           </div>
+          {comingSoon && (
+            <div className="absolute inset-x-3 bottom-3">
+              <span className="inline-flex px-2.5 py-1.5 rounded-lg bg-purple-600/90 backdrop-blur text-[10px] sm:text-xs font-semibold text-white">
+                Sắp chiếu{releaseDate ? ` · ${releaseDate}` : ""}
+              </span>
+            </div>
+          )}
         </div>
         <h3 className="font-semibold text-xs sm:text-sm leading-snug group-hover:text-purple-400 transition-colors line-clamp-1">
           {movie.title}
         </h3>
         <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{movie.genre?.split(",")[0] || movie.genre}</p>
         <p className="text-[10px] sm:text-xs text-purple-400 font-semibold mt-1">
-          Từ {formatCurrency(movie.ticket_price)}
+          {comingSoon
+            ? (releaseDate ? `Khởi chiếu ${releaseDate}` : "Chưa mở lịch đặt vé")
+            : `Từ ${formatCurrency(movie.ticket_price)}`}
         </p>
-    </Link>
+    </Wrapper>
   );
 }

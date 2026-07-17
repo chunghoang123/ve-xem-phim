@@ -3,6 +3,19 @@ const { getTrendingMovies } = require('../services/tmdb.service.cjs');
 const { success, error, paginated } = require('../utils/helpers.cjs');
 
 const MovieController = {
+  async getHomeSections(req, res) {
+    try {
+      const sections = await MovieModel.findHomeSections({
+        nowLimit: req.query.now_limit,
+        upcomingLimit: req.query.upcoming_limit,
+      });
+      return success(res, sections);
+    } catch (err) {
+      console.error('Movie home sections error:', err);
+      return error(res, 'Lỗi lấy phim trang chủ', 500);
+    }
+  },
+
   async getAll(req, res) {
     try {
       const { page = 1, limit = 10, search = '', sort_by: sortBy, sort_order: sortOrder, status } = req.query;

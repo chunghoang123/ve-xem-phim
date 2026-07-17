@@ -1,4 +1,5 @@
 const pool = require('../config/database.cjs');
+const { escapeLike } = require('../utils/helpers.cjs');
 
 const ShowtimeModel = {
   async findAll({ page = 1, limit = 20, movie_id, cinema_id, date, province_id, city, brand, include_past = false, _search = '' }) {
@@ -11,7 +12,7 @@ const ShowtimeModel = {
     if (date) { conditions.push('s.date = ?'); params.push(date); }
     if (province_id) { conditions.push('c.province_id = ?'); params.push(province_id); }
     if (city) { conditions.push('c.city = ?'); params.push(city); }
-    if (brand) { conditions.push('c.brand = ?'); params.push(brand); }
+    if (brand) { conditions.push('c.brand LIKE ?'); params.push(`%${escapeLike(brand)}%`); }
 
     const where = conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : '';
 
@@ -121,8 +122,8 @@ const ShowtimeModel = {
       params.push(filters.city);
     }
     if (filters.brand) {
-      conditions.push('c.brand = ?');
-      params.push(filters.brand);
+      conditions.push('c.brand LIKE ?');
+      params.push(`%${escapeLike(filters.brand)}%`);
     }
     if (filters.date) {
       conditions.push('s.date = ?');

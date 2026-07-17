@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, clearTokens, getTokenValue, setTokens } from "../lib/api";
+import { api, clearTokens, setTokens } from "../lib/api";
 import { AuthContext } from "../lib/auth-context";
 
 export default function AuthProvider({ children }) {
@@ -7,7 +7,6 @@ export default function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const fetchUser = useCallback(async () => {
-    const token = getTokenValue();
     try {
       const res = await api.get('/auth/me');
       setUser(res.data);

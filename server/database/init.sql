@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
   avatar VARCHAR(255) DEFAULT NULL,
   auth_provider VARCHAR(20) DEFAULT NULL,
   social_id VARCHAR(255) DEFAULT NULL,
-  role_id INT NOT NULL DEFAULT 3,
+  role_id INT NOT NULL DEFAULT 2,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE RESTRICT,
@@ -249,17 +249,15 @@ INSERT INTO provinces (id, code, name, region, latitude, longitude) VALUES
 -- Roles
 INSERT INTO roles (id, name, description) VALUES
 (1, 'admin', 'Toàn quyền quản trị hệ thống'),
-(2, 'staff', 'Nhân viên - được thêm/sửa nhưng không được xóa'),
-(3, 'user', 'Người dùng thông thường - chỉ xem và đặt vé');
+(2, 'user', 'Người dùng thông thường - chỉ xem và đặt vé');
 
--- Users (password hashed with bcrypt, plain: admin123 / staff123 / user123)
+-- Users (password hashed with bcrypt, plain: admin123 / user123)
 -- Passwords are hashed with bcrypt (salt rounds: 10)
--- admin123 / staff123 / user123
+-- admin123 / user123
 INSERT INTO users (id, name, email, password, phone, role_id) VALUES
 (1, 'Admin CineX', 'admin@cinex.vn', '$2b$10$kGR1rpb3W3waMIWueyHnYO2QbWsZ6.ojlx55ScF2xfpayNhIwxUmO', '0901000001', 1),
-(2, 'Staff CineX', 'staff@cinex.vn', '$2b$10$GQEjUznced7pcvZqByOJg.8qi8vHVuXuSS7z1K5xRI0.hp/vogvby', '0901000002', 2),
-(3, 'Nguyễn Văn A', 'user1@cinex.vn', '$2b$10$jR/sIIF8AFK9IrS/HS9XoegpPukJUMMyyd5zgMUeQ/n9qWaDuSI5u', '0901000003', 3),
-(4, 'Trần Thị B', 'user2@cinex.vn', '$2b$10$RXfWBKMO46mxDdDbzQpnsO9uXBcp5HN/oJVr0lXjel3r3RSIp4d2u', '0901000004', 3);
+(2, 'Nguyễn Văn A', 'user1@cinex.vn', '$2b$10$jR/sIIF8AFK9IrS/HS9XoegpPukJUMMyyd5zgMUeQ/n9qWaDuSI5u', '0901000003', 2),
+(3, 'Trần Thị B', 'user2@cinex.vn', '$2b$10$RXfWBKMO46mxDdDbzQpnsO9uXBcp5HN/oJVr0lXjel3r3RSIp4d2u', '0901000004', 2);
 
 -- Cinemas (data from Vietnamese cinema chains - estimated, based on 2025 market statistics)
 INSERT INTO cinemas (id, name, address, city, brand) VALUES

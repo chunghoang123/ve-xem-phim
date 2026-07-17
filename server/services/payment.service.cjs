@@ -4,7 +4,8 @@ const BookingModel = require('../models/booking.model.cjs');
 const BillModel = require('../models/bill.model.cjs');
 const BookingService = require('./booking.service.cjs');
 
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const CLIENT_URL = process.env.CLIENT_URL
+  || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : 'http://localhost:5173');
 
 function parseTlv(value) {
   const fields = {};
@@ -164,10 +165,19 @@ const PaymentService = {
     }
 
     let ticketCode = null;
+    let ticketList = [];
     if (booking && booking.status === 'CONFIRMED') {
       const TicketModel = require('../models/ticket.model.cjs');
       const tickets = await TicketModel.findByBooking(booking.id);
-      if (tickets.length > 0) ticketCode = tickets[0].ticket_code;
+      if (tickets.length > 0) {
+        ticketCode = tickets[0].ticket_code;
+        ticketList = tickets.map((ticket) => ({
+          code: ticket.ticket_code,
+          qrData: ticket.qr_data || ticket.ticket_code,
+          seatCode: `${ticket.row_label}${String(ticket.seat_number).padStart(2, '0')}`,
+          status: ticket.status,
+        }));
+      }
     }
 
     const qrRecipient = extractRecipientFromVietQr(payment.qr_code);
@@ -180,6 +190,7 @@ const PaymentService = {
       amount: payment.amount,
       expires_at: payment.expires_at,
       ticket_code: ticketCode,
+      tickets: ticketList,
       account_name: payment.account_name || qrRecipient.accountName || '',
       account_number: payment.account_number || qrRecipient.accountNumber || '',
       bank_bin: payment.bank_bin || qrRecipient.bin || '',

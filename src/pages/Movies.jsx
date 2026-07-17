@@ -8,16 +8,22 @@ const genres = ["Tất cả", "Hành động", "Khoa học viễn tưởng", "Ho
 export default function Movies() {
   const [search, setSearch] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("Tất cả");
-  const [movies, setMovies] = useState([]);
+  const [nowShowing, setNowShowing] = useState([]);
+  const [upcoming, setUpcoming] = useState([]);
+  const [activeSection, setActiveSection] = useState("nowShowing");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/movies?limit=50&sort_by=popularity&sort_order=DESC")
-      .then((res) => setMovies(res.data || []))
+    api.get("/movies/home?now_limit=50&upcoming_limit=50")
+      .then((res) => {
+        setNowShowing(res.data?.nowShowing || []);
+        setUpcoming(res.data?.upcoming || []);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
+  const movies = activeSection === "nowShowing" ? nowShowing : upcoming;
   const filtered = movies.filter((m) => {
     const matchSearch = m.title.toLowerCase().includes(search.toLowerCase());
     const matchGenre = selectedGenre === "Tất cả" || (m.genre && m.genre.toLowerCase().includes(selectedGenre.toLowerCase()));
@@ -37,7 +43,22 @@ export default function Movies() {
       <div className="w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
         <div className="mb-7 sm:mb-9">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1.5 sm:mb-2">Danh sách phim</h1>
-          <p className="text-muted-foreground text-sm sm:text-base">Khám phá những bộ phim đang chiếu tại CineX</p>
+          <p className="text-muted-foreground text-sm sm:text-base">
+            {activeSection === "nowShowing"
+              ? "Chọn phim đang có lịch chiếu và đặt vé ngay"
+              : "Các phim chuẩn bị ra mắt, chưa mở lịch đặt vé"}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 p-1.5 mb-6 sm:mb-8 max-w-md rounded-2xl bg-card border border-border">
+          <button type="button" onClick={() => setActiveSection("nowShowing")}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${activeSection === "nowShowing" ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md" : "text-muted-foreground hover:text-foreground"}`}>
+            Đang chiếu ({nowShowing.length})
+          </button>
+          <button type="button" onClick={() => setActiveSection("upcoming")}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${activeSection === "upcoming" ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md" : "text-muted-foreground hover:text-foreground"}`}>
+            Sắp chiếu ({upcoming.length})
+          </button>
         </div>
 
         <div className="mb-6 sm:mb-7">
@@ -70,7 +91,7 @@ export default function Movies() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5 md:gap-6">
           {filtered.map((movie, i) => (
             <div key={movie.id} className="animate-enter" style={{ animationDelay: `${i * 0.05}s` }}>
-              <MovieCard movie={movie} />
+              <MovieCard movie={movie} comingSoon={activeSection === "upcoming"} />
             </div>
           ))}
         </div>

@@ -6,8 +6,8 @@ const authorize = require('../middleware/authorize.cjs');
 
 router.get('/', PromotionController.getAll);
 router.get('/:id', PromotionController.getById);
-router.post('/', authenticate, authorize('admin', 'staff'), PromotionController.create);
-router.put('/:id', authenticate, authorize('admin', 'staff'), PromotionController.update);
+router.post('/', authenticate, authorize('admin'), PromotionController.create);
+router.put('/:id', authenticate, authorize('admin'), PromotionController.update);
 router.delete('/:id', authenticate, authorize('admin'), PromotionController.delete);
 
 module.exports = router;

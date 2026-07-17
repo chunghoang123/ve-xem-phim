@@ -1,6 +1,6 @@
 const pool = require('../config/database.cjs');
 const ShowtimeModel = require('../models/showtime.model.cjs');
-const { success, error, paginated } = require('../utils/helpers.cjs');
+const { success, error, paginated, escapeLike } = require('../utils/helpers.cjs');
 
 const ShowtimeController = {
   async getAll(req, res) {
@@ -194,8 +194,8 @@ const ShowtimeController = {
         params.push(`%${city}%`);
       }
       if (brand) {
-        conditions.push('c.brand = ?');
-        params.push(brand);
+        conditions.push('c.brand LIKE ?');
+        params.push(`%${escapeLike(brand)}%`);
       }
 
       const where = conditions.join(' AND ');

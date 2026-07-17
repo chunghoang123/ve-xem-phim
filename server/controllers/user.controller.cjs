@@ -42,7 +42,7 @@ const UserController = {
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await UserModel.create({ name, email, password: hashedPassword, phone, role_id: role_id || 3 });
+      const user = await UserModel.create({ name, email, password: hashedPassword, phone, role_id: role_id || 2 });
       return success(res, user, 'Thêm người dùng thành công', 201);
     } catch {
       return error(res, 'Lỗi thêm người dùng', 500);

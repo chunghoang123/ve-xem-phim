@@ -7,7 +7,8 @@ import TrailerModal from "../components/TrailerModal";
 import MovieCard from "../components/MovieCard";
 
 export default function Home() {
-  const [movies, setMovies] = useState([]);
+  const [nowShowing, setNowShowing] = useState([]);
+  const [comingSoon, setComingSoon] = useState([]);
   const [heroIndex, setHeroIndex] = useState(0);
   const [showTrailer, setShowTrailer] = useState(false);
   const [trailerUrl, setTrailerUrl] = useState(null);
@@ -23,12 +24,34 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    api.get("/movies?limit=8&sort_by=popularity&sort_order=DESC&status=active")
-      .then((res) => setMovies(res.data || []))
-      .catch(() => {});
+    api.get("/movies/home?now_limit=8&upcoming_limit=8")
+      .then((res) => {
+        setNowShowing(res.data?.nowShowing || []);
+        setComingSoon(res.data?.upcoming || []);
+      })
+      .catch(async () => {
+        // Keep the home page populated while an older backend process is still restarting.
+        try {
+          const [availableRes, allMoviesRes] = await Promise.all([
+            api.get("/movies/available"),
+            api.get("/movies?limit=50&sort_by=release_date&sort_order=ASC"),
+          ]);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const upcoming = (allMoviesRes.data || [])
+            .filter(movie => movie.release_date && new Date(movie.release_date) > today)
+            .sort((a, b) => new Date(a.release_date) - new Date(b.release_date));
+          setNowShowing((availableRes.data || []).slice(0, 8));
+          setComingSoon(upcoming.slice(0, 8));
+        } catch {
+          setNowShowing([]);
+          setComingSoon([]);
+        }
+      });
   }, []);
 
-  const heroCount = Math.min(movies.length, 4);
+  const heroMovies = nowShowing.slice(0, 4);
+  const heroCount = heroMovies.length;
 
   useEffect(() => {
     if (heroCount < 2) return;
@@ -38,17 +61,14 @@ export default function Home() {
     return () => clearInterval(intervalRef.current);
   }, [heroCount, goToSlide]);
 
-  const heroMovie = movies[heroIndex] || movies[0];
-
-  const nowShowing = movies.slice(0, 4);
-  const comingSoon = movies.slice(4, 8).length > 0 ? movies.slice(4, 8) : [];
+  const heroMovie = heroMovies[heroIndex] || heroMovies[0];
 
   return (
     <div className="min-h-screen w-full">
       {/* Hero Section */}
       <section className="relative min-h-[70vh] sm:min-h-[75vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          {movies.slice(0, heroCount).map((m, i) => (
+          {heroMovies.map((m, i) => (
             <img key={m.id} src={m.backdrop || m.poster || ''} alt="" onError={handleImgError}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out"
               style={{
@@ -158,7 +178,7 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5 md:gap-6">
-            {nowShowing.map((movie, i) => (
+            {nowShowing.slice(0, 4).map((movie, i) => (
               <MovieCard key={movie.id} movie={movie} index={i} />
             ))}
           </div>
@@ -179,8 +199,8 @@ export default function Home() {
               </Link>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5 md:gap-6">
-              {comingSoon.map((movie, i) => (
-                <MovieCard key={movie.id} movie={movie} index={i} />
+              {comingSoon.slice(0, 4).map((movie, i) => (
+                <MovieCard key={movie.id} movie={movie} index={i} comingSoon />
               ))}
             </div>
           </div>

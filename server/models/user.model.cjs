@@ -49,7 +49,7 @@ const UserModel = {
     return rows[0] || null;
   },
 
-  async create({ name, email, password, phone, avatar, role_id = 3, auth_provider, social_id }) {
+  async create({ name, email, password, phone, avatar, role_id = 2, auth_provider, social_id }) {
     const [result] = await pool.query(
       'INSERT INTO users (name, email, password, phone, avatar, role_id, auth_provider, social_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       [name, email || null, password || null, phone || null, avatar || null, role_id, auth_provider || null, social_id || null]

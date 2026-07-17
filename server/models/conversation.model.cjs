@@ -30,6 +30,7 @@ const ConversationModel = {
   async create(conversationId, userId) {
     const defaultState = {
       movieId: null, movieName: null,
+      discussionMovieId: null, discussionMovieName: null,
       location: null, latitude: null, longitude: null,
       cinemaId: null, cinemaName: null,
       showDate: null,
@@ -51,9 +52,30 @@ const ConversationModel = {
     if (!conv) {
       conv = await this.create(conversationId, userId);
     } else if (conv.status === 'EXPIRED') {
-      conv = await this.create(conversationId, userId);
+      const defaultState = {
+        movieId: null, movieName: null,
+        discussionMovieId: null, discussionMovieName: null,
+        location: null, latitude: null, longitude: null,
+        cinemaId: null, cinemaName: null,
+        showDate: null, showtimeId: null, showtimeInfo: null,
+        seatIds: [], seatCodes: [], holdCode: null,
+        bookingCode: null, paymentCode: null, orderCode: null,
+      };
+      await pool.query(
+        "UPDATE ai_conversations SET user_id = ?, current_step = 'SELECT_MOVIE', state_data = ?, status = 'ACTIVE', updated_at = NOW() WHERE conversation_id = ?",
+        [userId || null, JSON.stringify(defaultState), conversationId]
+      );
+      conv = await this.findByConversationId(conversationId);
     }
     return conv;
+  },
+
+  async bindUser(conversationId, userId) {
+    await pool.query(
+      'UPDATE ai_conversations SET user_id = ?, updated_at = NOW() WHERE conversation_id = ? AND user_id IS NULL',
+      [userId, conversationId]
+    );
+    return this.findByConversationId(conversationId);
   },
 
   async updateStep(conversationId, step, stateUpdates = {}) {

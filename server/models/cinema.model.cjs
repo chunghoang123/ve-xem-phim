@@ -9,9 +9,9 @@ const CinemaModel = {
     const params = [];
 
     if (search) {
-      conditions.push('(c.name LIKE ? OR c.address LIKE ? OR c.brand LIKE ?)');
+      conditions.push('(c.name LIKE ? OR c.address LIKE ? OR c.brand LIKE ? OR c.city LIKE ? OR c.district LIKE ?)');
       const s = `%${escapeLike(search)}%`;
-      params.push(s, s, s);
+      params.push(s, s, s, s, s);
     }
     if (city) {
       conditions.push('c.city = ?');
@@ -22,8 +22,8 @@ const CinemaModel = {
       params.push(district);
     }
     if (brand) {
-      conditions.push('c.brand = ?');
-      params.push(brand);
+      conditions.push('c.brand LIKE ?');
+      params.push(`%${escapeLike(brand)}%`);
     }
     if (region) {
       conditions.push('c.region = ?');
@@ -66,8 +66,8 @@ const CinemaModel = {
       conditions.push('c.lat IS NOT NULL AND c.lng IS NOT NULL');
     }
     if (brand) {
-      conditions.push('c.brand = ?');
-      params.push(brand);
+      conditions.push('c.brand LIKE ?');
+      params.push(`%${escapeLike(brand)}%`);
     }
     if (city) {
       conditions.push('c.city = ?');

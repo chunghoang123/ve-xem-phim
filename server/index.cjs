@@ -1,12 +1,17 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const CLIENT_URL = process.env.CLIENT_URL
+  || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : 'http://localhost:5173');
+
+app.set('trust proxy', 1);
 
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: CLIENT_URL,
   credentials: true,
 }));
 app.use(express.json());
@@ -20,11 +25,9 @@ const seatRoutes = require('./routes/seat.routes.cjs');
 const bookingRoutes = require('./routes/booking.routes.cjs');
 const promotionRoutes = require('./routes/promotion.routes.cjs');
 const userRoutes = require('./routes/user.routes.cjs');
-const roleRoutes = require('./routes/role.routes.cjs');
 const chatRoutes = require('./routes/chat.routes.cjs');
 const adminRoutes = require('./routes/admin.routes.cjs');
 const billRoutes = require('./routes/bill.routes.cjs');
-const ticketRoutes = require('./routes/ticket.routes.cjs');
 const concessionRoutes = require('./routes/concession.routes.cjs');
 
 // API v1 routes (new PayOS flow)
@@ -40,11 +43,9 @@ app.use('/api/seats', seatRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/promotions', promotionRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/roles', roleRoutes);
 app.use('/api/ai/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/bills', billRoutes);
-app.use('/api/tickets', ticketRoutes);
 app.use('/api/concessions', concessionRoutes);
 
 // API v1 routes
@@ -56,6 +57,16 @@ app.use('/api/v1', webhookV1Routes);
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'CineX API is running', timestamp: new Date().toISOString() });
 });
+
+// In production, Express serves the compiled React app on the same public domain.
+// This keeps API calls, auth cookies and payment return URLs on one HTTPS origin.
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.join(__dirname, '..', 'dist');
+  app.use(express.static(distPath));
+  app.get(/^(?!\/api(?:\/|$)).*/, (_req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 // 404 handler
 app.use((req, res) => {
@@ -69,7 +80,7 @@ app.use((err, req, res, _next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`CineX API server running on http://localhost:${PORT}`);
+  console.log(`CineX server listening on port ${PORT}`);
 
   // Start scheduler for expired holds/payments
   const SchedulerService = require('./services/scheduler.service.cjs');

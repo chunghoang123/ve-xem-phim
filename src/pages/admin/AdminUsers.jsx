@@ -64,7 +64,6 @@ export default function AdminUsers() {
   const roleBadge = (role) => {
     const styles = {
       admin: 'bg-purple-500/10 text-purple-400',
-      staff: 'bg-blue-500/10 text-blue-400',
       user: 'bg-muted text-muted-foreground',
     };
     return styles[role] || styles.user;
@@ -152,7 +151,7 @@ export default function AdminUsers() {
 
 function UserFormModal({ user, onSave, onClose }) {
   const [form, setForm] = useState(user ? { name: user.name, email: user.email, phone: user.phone || '', role_id: user.role_id, password: '' }
-    : { name: '', email: '', phone: '', role_id: 3, password: '' });
+    : { name: '', email: '', phone: '', role_id: 2, password: '' });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -192,8 +191,7 @@ function UserFormModal({ user, onSave, onClose }) {
             <label className="block text-xs font-medium text-muted-foreground mb-1.5">Vai trò</label>
             <select value={form.role_id} onChange={(e) => setForm({...form, role_id: Number(e.target.value)})}
               className="w-full px-3.5 py-2.5 rounded-xl bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
-              <option value={3}>Người dùng</option>
-              <option value={2}>Nhân viên</option>
+              <option value={2}>Người dùng</option>
               <option value={1}>Quản trị viên</option>
             </select>
           </div>

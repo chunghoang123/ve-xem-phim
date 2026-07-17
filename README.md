@@ -1,29 +1,48 @@
-# React + Vite
+# CineX - Website đặt vé xem phim tích hợp AI
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+CineX là website hỗ trợ người dùng tìm phim, chọn rạp và suất chiếu, đặt ghế, thanh toán và quản lý vé trực tuyến. Trợ lý AI giúp tìm kiếm và thực hiện quy trình đặt vé bằng hội thoại.
 
-Currently, two official plugins are available:
+## Phạm vi
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Hệ thống có hai vai trò:
 
-## React Compiler
+- `user`: xem phim, tìm suất chiếu, đặt ghế, thanh toán và quản lý vé cá nhân.
+- `admin`: quản lý dữ liệu phim, rạp, suất chiếu, khuyến mãi, người dùng và theo dõi đơn đặt vé.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Đây là website đặt vé trực tuyến, không phải hệ thống quản lý vận hành rạp hoặc bán vé tại quầy.
 
-## Expanding the Oxlint configuration
+## Chạy dự án
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
- admin@cinex.vn / admin123
- staff@cinex.vn / staff123
+```bash
+npm install
+npm run dev:all
+```
 
- Tất cả services load OK. "fetch failed" là do 2 vấn đề:
-1. TMDB (api.themoviedb.org) — DNS bị chặn, resolve về 127.0.0.1
-2. Google APIs (maps.googleapis.com, places.googleapis.com) — Key hợp lệ nhưng chưa bật billing → REQUEST_DENIED
-App vẫn chạy được với dữ liệu từ database local (danh sách phim, suất chiếu, đặt vé). Các tính năng cần API bên ngoài sẽ báo lỗi:
-- Đồng bộ phim từ TMDB 
-- Tìm rạp gần đây qua Google Places
-- Cập nhật poster/trailer tự động
-Cần làm: 
-- TMDB: dùng VPN hoặc đổi DNS (Cloudflare 1.1.1.1, Google 8.8.8.8)
-- Google: vào https://console.cloud.google.com → bật Billing cho project#
+Frontend mặc định chạy bằng Vite; backend được khởi động từ `server/index.cjs`.
+
+## Khởi tạo cơ sở dữ liệu
+
+Trên Windows, chạy `setup.bat` và nhập mật khẩu MySQL khi được yêu cầu.
+
+Tài khoản quản trị mẫu:
+
+- Email: `admin@cinex.vn`
+- Mật khẩu: `admin123`
+
+## Kiểm tra chất lượng
+
+```bash
+npm test
+npm run lint
+npm run build
+```
+
+## Dịch vụ bên ngoài
+
+Một số chức năng cần cấu hình biến môi trường trong `.env`, gồm TMDB, Google Maps/Places, Firebase, PayOS và dịch vụ AI. Xem `.env.example` để biết các biến cần thiết; không đưa khóa bí mật thật vào Git.
+
+Khi `TMDB_API_KEY` được cấu hình, backend tự đồng bộ thông tin phim lúc khởi động và sau mỗi 12 giờ. Có thể điều chỉnh lịch và phạm vi đồng bộ bằng các biến `TMDB_SYNC_*` trong `.env`.
+
+Nếu phim chưa có trailer, backend dùng YouTube Data API để tìm và bổ sung tự động trong cùng chu kỳ. Cấu hình `YOUTUBE_API_KEY` và giới hạn lượt tìm bằng `YOUTUBE_TRAILER_SYNC_LIMIT` để kiểm soát quota.
+
+Sau khi đồng bộ phim, backend tự phân bổ lịch chiếu an toàn cho phim mới bằng các suất tương lai chưa có người đặt hoặc giữ ghế. Trang chủ chỉ dùng phim thật sự có lịch tương lai cho banner và mục Đang chiếu; mục Sắp chiếu được xếp theo ngày phát hành gần nhất.

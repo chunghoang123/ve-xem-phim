@@ -149,7 +149,7 @@ export default function Navbar() {
                         <div className="px-4 py-3 border-b border-border">
                           <p className="text-sm font-semibold truncate">{user.name}</p>
                           <p className="text-xs text-muted-foreground mt-0.5 capitalize">
-                            {user.role === 'admin' ? 'Quản trị viên' : user.role === 'staff' ? 'Nhân viên' : 'Thành viên CineX'}
+                            {user.role === 'admin' ? 'Quản trị viên' : 'Thành viên CineX'}
                           </p>
                         </div>
                         {user.role !== 'admin' && (

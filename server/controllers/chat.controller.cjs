@@ -5,7 +5,7 @@ const { success, error } = require('../utils/helpers.cjs');
 const ChatController = {
   async chat(req, res) {
     try {
-      const { conversationId, message, latitude, longitude } = req.body;
+      const { conversationId, message, latitude, longitude, concessions, action } = req.body;
       if (!message || !message.trim()) {
         return error(res, 'Vui lòng nhập tin nhắn', 400);
       }
@@ -19,6 +19,8 @@ const ChatController = {
         userId,
         latitude,
         longitude,
+        concessions,
+        action,
       });
 
       return res.json({
@@ -27,6 +29,7 @@ const ChatController = {
       });
     } catch (err) {
       console.error('Chat error:', err);
+      if (err.code === 'FORBIDDEN') return error(res, err.message, 403);
       return error(res, 'Lỗi xử lý tin nhắn', 500);
     }
   },
@@ -36,6 +39,9 @@ const ChatController = {
       const { conversationId } = req.params;
       const conv = await ConversationModel.findByConversationId(conversationId);
       if (!conv) return error(res, 'Không tìm thấy hội thoại', 404);
+      if (conv.user_id !== req.user.userId && req.user.role !== 'admin') {
+        return error(res, 'Bạn không có quyền xem hội thoại này', 403);
+      }
 
       const state = typeof conv.state_data === 'string' ? JSON.parse(conv.state_data) : conv.state_data;
 
@@ -46,7 +52,7 @@ const ChatController = {
         state,
       });
     } catch {
-      return _error(res, 'Lỗi lấy hội thoại', 500);
+      return error(res, 'Lỗi lấy hội thoại', 500);
     }
   },
 
@@ -55,6 +61,9 @@ const ChatController = {
       const { conversationId } = req.params;
       const conv = await ConversationModel.findByConversationId(conversationId);
       if (!conv) return error(res, 'Không tìm thấy hội thoại', 404);
+      if (conv.user_id !== req.user.userId && req.user.role !== 'admin') {
+        return error(res, 'Bạn không có quyền thay đổi hội thoại này', 403);
+      }
 
       await ConversationModel.resetToStep(conversationId, 'SELECT_MOVIE', ['userId']);
       return success(res, null, 'Đã reset hội thoại');

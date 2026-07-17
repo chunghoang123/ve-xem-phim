@@ -1,6 +1,7 @@
 const { syncMovies, fetchTMDB, TMDB_IMAGE, searchMovieByTitle, enrichMovieFromTMDB, enrichAllMovies, addMovieFromTMDB, fetchMovieDetail } = require('../services/tmdb.service.cjs');
 const { success, error } = require('../utils/helpers.cjs');
 const pool = require('../config/database.cjs');
+const ShowtimeSchedulerService = require('../services/showtime-scheduler.service.cjs');
 
 const AdminController = {
   async syncTMDB(req, res) {
@@ -10,7 +11,13 @@ const AdminController = {
       for (let p = 1; p <= Math.min(pages, 5); p++) {
         total += await syncMovies(type, p);
       }
-      return success(res, { synced: total, type }, `Đồng bộ ${total} phim từ TMDB thành công`);
+      const scheduledMovies = await ShowtimeSchedulerService.ensureShowtimesForNewMovies();
+      const showtimes = scheduledMovies.reduce((sum, movie) => sum + movie.created, 0);
+      return success(
+        res,
+        { synced: total, type, scheduled_movies: scheduledMovies.length, showtimes },
+        `Đồng bộ ${total} phim và cập nhật ${showtimes} suất chiếu thành công`
+      );
     } catch (err) {
       return error(res, err.message || 'Lỗi đồng bộ TMDB', 500);
     }
@@ -39,7 +46,7 @@ const AdminController = {
       );
       const [totalMovies] = await pool.query('SELECT COUNT(*) as total FROM movies');
       const [lastSync] = await pool.query(
-        'SELECT MAX(created_at) as last_sync FROM movies WHERE tmdb_id IS NOT NULL'
+        'SELECT MAX(updated_at) as last_sync FROM movies WHERE tmdb_id IS NOT NULL'
       );
       return success(res, {
         tmdb_movies: tmdbCount[0].total,
@@ -89,6 +96,7 @@ const AdminController = {
       const { tmdbId } = req.body;
       if (!tmdbId) return error(res, 'Vui lòng cung cấp tmdbId', 400);
       const movie = await addMovieFromTMDB(tmdbId);
+      await ShowtimeSchedulerService.ensureShowtimesForNewMovies();
       return success(res, movie, 'Thêm phim từ TMDB thành công', 201);
     } catch (err) {
       return error(res, err.message || 'Lỗi thêm phim từ TMDB', 500);
