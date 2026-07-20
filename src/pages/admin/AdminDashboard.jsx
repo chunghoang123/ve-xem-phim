@@ -1,8 +1,35 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Film, Users, Calendar, Database, RefreshCw, Check, AlertCircle } from "lucide-react";
+import { Film, Users, Calendar, Database, RefreshCw, Check, AlertCircle, TrendingUp } from "lucide-react";
 import { formatCurrency } from "../../lib/utils";
 import { api } from "../../lib/api";
+
+const SAMPLE_REVENUE = [4850000, 6200000, 5700000, 8100000, 7600000, 9400000, 11200000];
+const SAMPLE_BOOKINGS = [32, 41, 38, 54, 50, 63, 75];
+
+function withSampleRevenue(data) {
+  if (!data?.weeks?.length || data.weeks.some(week => Number(week.revenue) > 0)) return data;
+
+  const weeks = data.weeks.map((week, index) => ({
+    ...week,
+    revenue: SAMPLE_REVENUE[index] || SAMPLE_REVENUE.at(-1),
+    booking_count: SAMPLE_BOOKINGS[index] || SAMPLE_BOOKINGS.at(-1),
+  }));
+  const current = weeks.at(-1).revenue;
+  const previous = weeks.at(-2).revenue;
+
+  return {
+    ...data,
+    is_sample: true,
+    weeks,
+    summary: {
+      total_revenue: weeks.reduce((sum, week) => sum + week.revenue, 0),
+      total_bookings: weeks.reduce((sum, week) => sum + week.booking_count, 0),
+      current_week_revenue: current,
+      change_percent: Math.round(((current - previous) / previous) * 1000) / 10,
+    },
+  };
+}
 
 export default function AdminDashboard() {
   const [movies, setMovies] = useState([]);
@@ -12,6 +39,8 @@ export default function AdminDashboard() {
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState("");
   const [syncStatus, setSyncStatus] = useState(null);
+  const [revenueData, setRevenueData] = useState(null);
+  const [revenueLoading, setRevenueLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
@@ -27,6 +56,10 @@ export default function AdminDashboard() {
     }).catch(() => {});
 
     api.get("/admin/sync/status").then(res => setSyncStatus(res.data)).catch(() => {});
+    api.get("/admin/stats/revenue-weekly?weeks=7")
+      .then(res => setRevenueData(withSampleRevenue(res.data)))
+      .catch(() => setRevenueData(null))
+      .finally(() => setRevenueLoading(false));
   }, []);
 
   const handleSync = async (type) => {
@@ -68,6 +101,80 @@ export default function AdminDashboard() {
             <p className="text-xl sm:text-2xl font-bold">{stat.value}</p>
           </div>
         ))}
+      </div>
+
+      {/* Weekly revenue */}
+      <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 mb-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-6">
+          <div>
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-emerald-400" />
+              <h2 className="font-semibold text-base">Doanh thu theo tuần</h2>
+              {revenueData?.is_sample && (
+                <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-400">
+                  Dữ liệu mẫu
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Tổng hợp các đơn đã thanh toán trong 7 tuần gần nhất</p>
+          </div>
+          {revenueData && (
+            <div className="sm:text-right">
+              <p className="text-xs text-muted-foreground">Tuần hiện tại</p>
+              <p className="text-xl font-bold text-emerald-400">
+                {formatCurrency(revenueData.summary.current_week_revenue)}
+              </p>
+              {revenueData.summary.change_percent !== null && (
+                <p className={`text-xs font-medium ${revenueData.summary.change_percent >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                  {revenueData.summary.change_percent >= 0 ? "+" : ""}{revenueData.summary.change_percent}% so với tuần trước
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        {revenueLoading ? (
+          <div className="h-56 flex items-center justify-center text-sm text-muted-foreground">
+            <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Đang tải doanh thu...
+          </div>
+        ) : !revenueData ? (
+          <div className="h-56 flex items-center justify-center text-sm text-muted-foreground">
+            Không thể tải dữ liệu doanh thu
+          </div>
+        ) : (
+          <div>
+            <div className="h-56 flex items-end gap-2 sm:gap-4 border-b border-border px-1 sm:px-3">
+              {revenueData.weeks.map((week) => {
+                const maxRevenue = Math.max(...revenueData.weeks.map(item => item.revenue), 1);
+                const height = week.revenue > 0 ? Math.max((week.revenue / maxRevenue) * 100, 5) : 2;
+                return (
+                  <div key={week.start_date} className="group relative flex-1 h-full flex items-end justify-center" tabIndex={0}>
+                    <div
+                      className="w-full max-w-14 rounded-t-lg bg-gradient-to-t from-purple-600 to-emerald-400 transition-all duration-300 group-hover:brightness-110"
+                      style={{ height: `${height}%` }}
+                      role="img"
+                      aria-label={`Tuần ${week.label}: ${formatCurrency(week.revenue)}, ${week.booking_count} đơn`}
+                    />
+                    <div
+                      className="pointer-events-none absolute left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-border bg-background px-3 py-2 text-xs shadow-xl group-hover:block group-focus:block"
+                      style={{ bottom: `calc(${height}% + 8px)` }}
+                    >
+                      <p className="font-semibold">{formatCurrency(week.revenue)}</p>
+                      <p className="text-muted-foreground">{week.booking_count} đơn đã thanh toán</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex gap-2 sm:gap-4 px-1 sm:px-3 pt-2">
+              {revenueData.weeks.map(week => (
+                <div key={week.start_date} className="flex-1 text-center text-[10px] sm:text-xs text-muted-foreground">
+                  {week.label}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* TMDB Sync */}

@@ -2,8 +2,23 @@ const { syncMovies, fetchTMDB, TMDB_IMAGE, searchMovieByTitle, enrichMovieFromTM
 const { success, error } = require('../utils/helpers.cjs');
 const pool = require('../config/database.cjs');
 const ShowtimeSchedulerService = require('../services/showtime-scheduler.service.cjs');
+const AdminStatsService = require('../services/admin-stats.service.cjs');
 
 const AdminController = {
+  async getWeeklyRevenue(req, res) {
+    try {
+      const requestedWeeks = Number.parseInt(req.query.weeks, 10);
+      const weeks = Number.isInteger(requestedWeeks)
+        ? Math.min(Math.max(requestedWeeks, 4), 12)
+        : 7;
+      const result = await AdminStatsService.getWeeklyRevenue(weeks);
+      return success(res, result, 'Lấy doanh thu theo tuần thành công');
+    } catch (err) {
+      console.error('Weekly revenue error:', err.message);
+      return error(res, 'Lỗi lấy doanh thu theo tuần', 500);
+    }
+  },
+
   async syncTMDB(req, res) {
     try {
       const { type = 'now_playing', pages = 1 } = req.body;

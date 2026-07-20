@@ -5,6 +5,7 @@ const { authenticate } = require('../middleware/auth.cjs');
 const authorize = require('../middleware/authorize.cjs');
 const ScheduleSettings = require('../controllers/scheduleSettings.controller.cjs');
 
+router.get('/stats/revenue-weekly', authenticate, authorize('admin'), AdminController.getWeeklyRevenue);
 router.post('/sync/tmdb', authenticate, authorize('admin'), AdminController.syncTMDB);
 router.get('/sync/tmdb/:tmdbId', authenticate, authorize('admin'), AdminController.fetchMovieFromTMDB);
 router.get('/sync/status', authenticate, authorize('admin'), AdminController.getSyncStatus);
