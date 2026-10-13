@@ -1,0 +1,79 @@
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: cinex-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cinex-network
+
+  # Backend API + Frontend (Express serves dist in production, same origin)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY:-}
+        VITE_FIREBASE_AUTH_DOMAIN: ${VITE_FIREBASE_AUTH_DOMAIN:-}
+        VITE_FIREBASE_PROJECT_ID: ${VITE_FIREBASE_PROJECT_ID:-}
+        VITE_FIREBASE_STORAGE_BUCKET: ${VITE_FIREBASE_STORAGE_BUCKET:-}
+        VITE_FIREBASE_MESSAGING_SENDER_ID: ${VITE_FIREBASE_MESSAGING_SENDER_ID:-}
+        VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID:-}
+    container_name: cinex-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      CLIENT_URL: ${CLIENT_URL}
+      TMDB_API_KEY: ${TMDB_API_KEY:-}
+      TMDB_SYNC_ENABLED: ${TMDB_SYNC_ENABLED:-true}
+      TMDB_SYNC_INTERVAL_HOURS: ${TMDB_SYNC_INTERVAL_HOURS:-12}
+      TMDB_SYNC_PAGES: ${TMDB_SYNC_PAGES:-1}
+      TMDB_SYNC_TYPES: ${TMDB_SYNC_TYPES:-upcoming,now_playing,popular}
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY:-}
+      YOUTUBE_TRAILER_SYNC_LIMIT: ${YOUTUBE_TRAILER_SYNC_LIMIT:-50}
+      AUTO_SHOWTIME_DAYS_AHEAD: ${AUTO_SHOWTIME_DAYS_AHEAD:-7}
+      AUTO_SHOWTIME_MOVIE_LIMIT: ${AUTO_SHOWTIME_MOVIE_LIMIT:-20}
+      PAYOS_CLIENT_ID: ${PAYOS_CLIENT_ID:-}
+      PAYOS_API_KEY: ${PAYOS_API_KEY:-}
+      PAYOS_CHECKSUM_KEY: ${PAYOS_CHECKSUM_KEY:-}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL:-}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
+      NVIDIA_MODEL: ${NVIDIA_MODEL:-meta/llama-3.1-8b-instruct}
+      NVIDIA_API_URL: ${NVIDIA_API_URL:-https://integrate.api.nvidia.com/v1/chat/completions}
+      NVIDIA_TIMEOUT_MS: ${NVIDIA_TIMEOUT_MS:-45000}
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - cinex-network
+
+volumes:
+  mysql_data:
+
+networks:
+  cinex-network:
+    driver: bridge

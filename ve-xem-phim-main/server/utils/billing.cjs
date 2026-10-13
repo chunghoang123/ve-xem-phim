@@ -1,0 +1,1 @@
+function calculateBookingTotal(ticketSubtotal, concessionTotal) { const serviceFee=Math.round(Number(ticketSubtotal)*0.02); return {serviceFee,totalAmount:Number(ticketSubtotal)+serviceFee+Number(concessionTotal||0)}; } module.exports={calculateBookingTotal};
